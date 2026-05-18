@@ -1,17 +1,82 @@
 ---
+import Layout from '../layouts/Layout.astro';
 
+const features = [
+  {
+    title: 'Sort the payments',
+    body: 'No more chasing for £8. Stripe Connect splits the booking fee and pulls payment from each player automatically when they sign up.',
+  },
+  {
+    title: 'Balance the teams',
+    body: 'A skill-rating engine learns from every result and proposes two fairly-matched sides. No more "I always end up with the same lot."',
+  },
+  {
+    title: 'Settle the debates',
+    body: 'Win streaks, Man of the Match, head-to-head, season titles. The receipts your group has been arguing about for years, finally tracked.',
+  },
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout>
+  <main class="min-h-screen bg-brand-green text-brand-black">
+    <!-- Top nav -->
+    <header class="px-6 pt-6 pb-4 flex items-center justify-between max-w-6xl mx-auto">
+      <a href="/" class="flex items-center gap-2">
+        <img src="/megs-logo.svg" alt="Megs" class="h-8 w-auto" />
+      </a>
+      <a
+        href="https://app.megs.club"
+        class="text-sm font-semibold underline underline-offset-4 decoration-2"
+      >
+        Open the app →
+      </a>
+    </header>
+
+    <!-- Hero -->
+    <section class="px-6 pt-12 pb-20 max-w-6xl mx-auto">
+      <h1 class="font-display text-5xl md:text-7xl lg:text-8xl leading-[0.95] mb-6 max-w-4xl">
+        Your weekly football,<br />sorted.
+      </h1>
+      <p class="font-body text-lg md:text-xl max-w-2xl mb-10 opacity-90">
+        Sort payments, track availability, balance teams and settle the debates. The app built for your weekly five-a-side game.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a
+          href="https://app.megs.club/create"
+          class="inline-flex items-center justify-center rounded-xl bg-brand-black text-brand-cream font-body font-semibold px-6 py-3.5 text-base hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none shadow-brand transition-all"
+        >
+          Start a group →
+        </a>
+        <a
+          href="https://app.megs.club"
+          class="inline-flex items-center justify-center rounded-xl bg-transparent border-2 border-brand-black text-brand-black font-body font-semibold px-6 py-3.5 text-base hover:bg-brand-black hover:text-brand-cream transition-colors"
+        >
+          I've used Megs before
+        </a>
+      </div>
+    </section>
+
+    <!-- Feature cards -->
+    <section class="px-6 pb-20 max-w-6xl mx-auto">
+      <div class="grid md:grid-cols-3 gap-4">
+        {features.map(f => (
+          <div class="bg-brand-cream rounded-2xl p-6 shadow-brand-sm">
+            <h2 class="font-display text-2xl mb-3">{f.title}</h2>
+            <p class="font-body text-sm leading-relaxed text-brand-black/80">{f.body}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="px-6 py-8 max-w-6xl mx-auto border-t-2 border-brand-black/15 text-sm font-body opacity-70">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <span>© {new Date().getFullYear()} Megs</span>
+        <div class="flex gap-6">
+          <a href="https://app.megs.club" class="hover:opacity-100 opacity-70">Open app</a>
+          <a href="/privacy" class="hover:opacity-100 opacity-70">Privacy</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+</Layout>

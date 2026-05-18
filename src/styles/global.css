@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+/* Brand fonts — load Inter Tight + Bagel Fat One from Google */
+@import url('https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Inter+Tight:wght@400;500;600;700;800&display=swap');
+
+@theme {
+  /* Brand primitives (mirrors fairteams-git/tailwind.config.ts) */
+  --color-brand-black: #0E0F0C;
+  --color-brand-cream: #F4EFE0;
+  --color-brand-green: #2BD06B;
+  --color-brand-orange: #FF5B1F;
+
+  --font-display: "Bagel Fat One", Impact, sans-serif;
+  --font-body: "Inter Tight", system-ui, sans-serif;
+
+  /* Brand shadow used throughout the app */
+  --shadow-brand: 5px 5px 0 #0E0F0C;
+  --shadow-brand-orange: 5px 5px 0 #FF5B1F;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-brand-green);
+  color: var(--color-brand-black);
+  -webkit-font-smoothing: antialiased;
+}

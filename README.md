@@ -1,43 +1,32 @@
-# Astro Starter Kit: Minimal
+# megs-landing
 
-```sh
-npm create astro@latest -- --template minimal
+Marketing landing page for [Megs](https://app.megs.club) — the 5-a-side football management app.
+
+- **Stack:** Astro + Tailwind v4
+- **Domain:** `megs.club` (apex) — the app lives at `app.megs.club`
+- **Brand assets:** copied in from the app repo (`/Users/eddie/fairteams-git/public/`)
+- **Primary CTA:** `https://app.megs.club/create` (drops straight into the "create a group" wizard)
+
+## Develop locally
+
+```bash
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Open <http://localhost:4321>.
 
-## 🚀 Project Structure
+## Deploy
 
-Inside of your Astro project, you'll see the following folders and files:
+Connected to Vercel — auto-deploys on push to `main`. DNS for `megs.club` lives at GoDaddy.
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## Brand tokens
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Mirrors the app's Tailwind theme. Edit `src/styles/global.css` to keep in sync.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+- Astro Green `#2BD06B` — page background
+- Boot Black `#0E0F0C` — primary buttons + text
+- Panini Cream `#F4EFE0` — card surfaces
+- Mercurial Orange `#FF5B1F` — urgency / accent
 
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Fonts: **Bagel Fat One** (display), **Inter Tight** (body).
