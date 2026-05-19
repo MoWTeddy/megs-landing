@@ -10,6 +10,27 @@ const {
   title = 'Megs - Your Weekly Football, Sorted',
   description = 'Sort payments, track availability, balance teams and settle the debates. The app built for your weekly five-a-side game.',
 } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://megs.club').href;
+
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Megs',
+  url: 'https://megs.club',
+  logo: 'https://megs.club/megs-logo.svg',
+  sameAs: [
+    'https://www.instagram.com/megsclub',
+    'https://www.tiktok.com/@megs.club',
+  ],
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Megs',
+  url: 'https://megs.club',
+};
 ---
 
 <!doctype html>
@@ -19,13 +40,14 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="canonical" href={canonicalURL} />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#2BD06B" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Megs" />
-    <meta property="og:url" content="https://megs.club" />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content="https://megs.club/og-image.png" />
@@ -35,6 +57,9 @@ const {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content="https://megs.club/og-image.png" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
   </head>
   <body>
     <slot />
