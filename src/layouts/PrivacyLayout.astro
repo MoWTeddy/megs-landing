@@ -1,0 +1,123 @@
+---
+import Layout from './Layout.astro';
+const { frontmatter } = Astro.props;
+---
+
+<Layout title={frontmatter.title} description="Megs privacy notice - what we collect, why, and your rights.">
+  <main class="bg-brand-cream text-brand-black min-h-screen">
+    <header class="px-6 pt-6 pb-2 max-w-3xl mx-auto">
+      <a href="/" class="inline-flex items-center gap-2 text-sm font-semibold hover:opacity-70 transition-opacity">
+        <span aria-hidden="true">←</span> Back to Megs
+      </a>
+    </header>
+
+    <article class="prose-megs px-6 py-12 max-w-3xl mx-auto">
+      <slot />
+    </article>
+
+    <footer class="border-t-2 border-brand-black/15 px-6 py-8 max-w-3xl mx-auto text-sm font-body opacity-70 flex flex-wrap justify-between gap-4">
+      <span>© {new Date().getFullYear()} Megs</span>
+      <a href="/" class="hover:opacity-100">← Home</a>
+    </footer>
+  </main>
+</Layout>
+
+<style is:global>
+  .prose-megs {
+    font-family: var(--font-body);
+  }
+  .prose-megs h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    line-height: 0.95;
+    margin: 0 0 0.75rem;
+  }
+  .prose-megs h2 {
+    font-family: var(--font-body);
+    font-weight: 800;
+    font-size: 1.75rem;
+    letter-spacing: -0.01em;
+    margin: 3rem 0 1rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid rgba(14, 15, 12, 0.1);
+  }
+  .prose-megs h2:first-of-type {
+    border-top: none;
+    padding-top: 0;
+  }
+  .prose-megs h3 {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin: 1.5rem 0 0.5rem;
+  }
+  .prose-megs p {
+    font-size: 1rem;
+    line-height: 1.65;
+    margin: 0 0 1rem;
+    color: rgba(14, 15, 12, 0.85);
+  }
+  .prose-megs a {
+    color: #FF5B1F;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 600;
+  }
+  .prose-megs a:hover {
+    opacity: 0.75;
+  }
+  .prose-megs strong { font-weight: 700; }
+  .prose-megs ul, .prose-megs ol {
+    padding-left: 1.5rem;
+    margin: 0 0 1rem;
+  }
+  .prose-megs li {
+    margin: 0.25rem 0;
+    line-height: 1.6;
+    color: rgba(14, 15, 12, 0.85);
+  }
+  .prose-megs code {
+    font-family: var(--font-scoreboard);
+    font-size: 0.85em;
+    background: rgba(14, 15, 12, 0.08);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .prose-megs hr {
+    border: none;
+    border-top: 2px dashed rgba(14, 15, 12, 0.15);
+    margin: 2.5rem 0;
+  }
+  .prose-megs blockquote {
+    border-left: 3px solid #FF5B1F;
+    background: rgba(255, 91, 31, 0.05);
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95rem;
+  }
+  .prose-megs blockquote p { margin: 0; }
+  .prose-megs table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: 0.9rem;
+    display: block;
+    overflow-x: auto;
+  }
+  .prose-megs thead {
+    background: rgba(14, 15, 12, 0.05);
+  }
+  .prose-megs th, .prose-megs td {
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid rgba(14, 15, 12, 0.1);
+    vertical-align: top;
+  }
+  .prose-megs th {
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>

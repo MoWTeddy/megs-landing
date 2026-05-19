@@ -1,80 +1,628 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import eddiePhoto from '../assets/eddie.png';
+
+const steps = [
+  { n: '01', title: 'Set it up', body: 'Create a recurring game in seconds - time, pitch, players. And automate it, if you want.', imageSrc: '/step-1-set-it-up.jpg' },
+  { n: '02', title: 'Share it', body: 'Send a link. Players join and pay to play via Apple Pay or Google Pay (or cash, if you must).', imageSrc: '/step-2-share-it.png' },
+  { n: '03', title: 'Teams sorted', body: 'Megs balances the sides automatically, based on player ability (that updates with each game) and how much they affect a game.', imageSrc: '/step-3-teams.jpg' },
+  { n: '04', title: 'Play & track', body: 'Log the score. Ratings update. Stats build over time.' },
+];
 
 const features = [
   {
-    title: 'Sort the payments',
-    body: 'No more chasing for £8. Stripe Connect splits the booking fee and pulls payment from each player automatically when they sign up.',
+    title: 'Teams',
+    body: 'Balanced every week. No bias, no debates.',
+    shot: 'feature-teams',
+    note: 'PNG 4:3 - balanced-teams panel slice',
+    imageSrc: '/feature-teams.png',
+    imageAspect: 'aspect-[1/1]',
+    imagePosition: 'object-top',
   },
   {
-    title: 'Balance the teams',
-    body: 'A skill-rating engine learns from every result and proposes two fairly-matched sides. No more "I always end up with the same lot."',
+    title: "Who's playing",
+    body: "See who's in, who's out and who's on the bench. No more group-chat roll call.",
+    shot: 'feature-availability',
+    note: 'PNG 4:3 - IN / OUT / BENCH list slice',
+    imageSrc: '/feature-availability.jpg',
+    imageAspect: 'aspect-[1/1]',
+    imagePosition: 'object-top',
   },
   {
-    title: 'Settle the debates',
-    body: 'Win streaks, Man of the Match, head-to-head, season titles. The receipts your group has been arguing about for years, finally tracked.',
+    title: 'Payments',
+    body: "Apple Pay, Google Pay or card. Paid before they play - no IOUs, no bank transfers, no 'who's got change?'",
+    shot: 'feature-payments',
+    note: 'PNG 4:3 - payments panel slice',
+    imageSrc: '/feature-payments.png',
+    imageAspect: 'aspect-[1/1]',
+    imagePosition: 'object-top',
+  },
+  {
+    title: 'Stats',
+    body: 'Win streaks, MOTM, head-to-heads, season titles - the receipts your group chat has been crying out for.',
+    shot: 'feature-stats',
+    note: 'PNG 4:3 - leaderboard / form table slice',
+    imageSrc: '/feature-stats.png',
+    imageAspect: 'aspect-[1/1]',
+    imagePosition: 'object-top',
+  },
+];
+
+const navLinks = [
+  { href: '#how-it-works', label: 'How it works' },
+  { href: '#features', label: 'What Megs does' },
+  { href: '#why', label: 'Why Megs' },
+];
+
+const heroPlayers = ['Si', 'Ryan', 'Baz', 'Joe', 'Dec', 'Rob', 'Ash', 'Ali Dia', 'Will', 'Pete'];
+
+const testimonials = [
+  {
+    quote: "Stopped having to chase 14 lads every Tuesday. Best decision our group's made since switching to bibs.",
+    name: "Graham",
+    location: "Manchester",
+  },
+  {
+    quote: "Teams are actually balanced now. No more 'this is rigged' messages at full time.",
+    name: "Jono",
+    location: "Bristol",
+  },
+  {
+    quote: "Used to spend an hour every week sorting fives. Now it's all done before kick-off.",
+    name: "Will",
+    location: "Glasgow",
+  },
+];
+
+const faqs = [
+  {
+    q: 'Is Megs really free?',
+    a: "Yep, properly free. No subscription, no trial, no card on file. If you choose to collect match fees through Megs, players pay a small per-match fee on top of their share (20p platform fee and roughly 30p for the card payment processing costs) - that's how Megs keeps the lights on. The idea being, most players won't be fussed about the extra small charge for the convenience of paying via Apple Pay or Google Pay! You can still take cash or bank transfer if you'd rather organise payment yourself - you just lose the auto-tracking and ease of running thing.",
+  },
+  {
+    q: 'Does this only work for 5-a-side, or 6s, 7s - even 11s?',
+    a: "Nope, all of them. 5-a-side is the most common but Megs handles 6s, 7s, 8s and full 11-a-side games. You set the format when you create the group, and the balancing algorithm adjusts to the number of outfield players and keepers. Group sizes are flexible too - whether you're 6 deep or 14 - and popular games run a waitlist automatically once you hit capacity.",
+  },
+  {
+    q: 'Do players need to download anything?',
+    a: "Players sign up the first time they join your group (takes 30 seconds, no app required). After that, every fixture you share is a one-tap confirm and pay. The official app will be ready shortly!",
+  },
+  {
+    q: 'How do player ratings work?',
+    a: "Every player gets a starting skill rating out of 100. After each game, ratings tick up or down based on the result - small adjustments per match, so the system gets sharper the longer your group plays. On top of the headline rating, the organiser sets each player's Goal Threat (Low / Med / High) and Defensive Work Rate (Low / Med / High). Megs also spreads players around week to week, so the same crew doesn't end up on the same side every game - keeps the matchups fresh.",
+  },
+  {
+    q: "Can players see each other's skill ratings?",
+    a: "No. Only you (the organiser) can see specific ratings as you will help provide their initial skill rating, compared to other players in your group (and these scores adjust each game they play). Players see they're on a balanced team but not the numbers - no awkwardness, no group-chat fallout.",
+  },
+  {
+    q: 'What happens if someone drops out last minute?',
+    a: "When someone drops, their spot reopens automatically and waitlisted players get notified. If a replacement joins, the original gets refunded automatically. If nobody fills the spot, refunds are at your discretion as organiser.",
+  },
+  {
+    q: 'Can I run more than one group?',
+    a: "Yes. Plenty of organisers run a Tuesday and a Thursday group from the same account. Each group keeps its own players, ratings, stats and recurring fixture - all separate.",
   },
 ];
 ---
 
 <Layout>
-  <main class="min-h-screen bg-brand-green text-brand-black">
-    <!-- Top nav -->
-    <header class="px-6 pt-6 pb-4 flex items-center justify-between max-w-6xl mx-auto">
-      <a href="/" class="flex items-center gap-2">
-        <img src="/megs-logo.svg" alt="Megs" class="h-8 w-auto" />
-      </a>
-      <a
-        href="https://app.megs.club"
-        class="text-sm font-semibold underline underline-offset-4 decoration-2"
-      >
-        Open the app →
-      </a>
-    </header>
-
-    <!-- Hero -->
-    <section class="px-6 pt-12 pb-20 max-w-6xl mx-auto">
-      <h1 class="font-display text-5xl md:text-7xl lg:text-8xl leading-[0.95] mb-6 max-w-4xl">
-        Your weekly football,<br />sorted.
-      </h1>
-      <p class="font-body text-lg md:text-xl max-w-2xl mb-10 opacity-90">
-        Sort payments, track availability, balance teams and settle the debates. The app built for your weekly five-a-side game.
-      </p>
-      <div class="flex flex-wrap gap-3">
+  <main class="bg-brand-green text-brand-black">
+    <!-- ============== NAV + HERO (single bg so stripes + glow are continuous) ============== -->
+    <div class="bg-pitch-glow">
+      <!-- Nav -->
+      <header class="px-6 pt-6 pb-4 max-w-6xl mx-auto flex items-center justify-between gap-6">
+        <a href="/" class="flex items-center gap-2 shrink-0">
+          <img src="/megs-logo.svg" alt="Megs" class="h-8 w-auto" />
+        </a>
+        <nav class="hidden md:flex items-center gap-7 text-sm font-semibold">
+          {navLinks.map(l => (
+            <a href={l.href} class="hover:opacity-70 transition-opacity">{l.label}</a>
+          ))}
+        </nav>
         <a
           href="https://app.megs.club/create"
-          class="inline-flex items-center justify-center rounded-xl bg-brand-black text-brand-cream font-body font-semibold px-6 py-3.5 text-base hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none shadow-brand transition-all"
+          class="inline-flex items-center justify-center rounded-full bg-brand-black text-brand-cream font-semibold text-sm px-5 py-2.5 hover:opacity-90 transition-opacity"
         >
-          Start a group →
+          Get the app - it's free
         </a>
-        <a
-          href="https://app.megs.club"
-          class="inline-flex items-center justify-center rounded-xl bg-transparent border-2 border-brand-black text-brand-black font-body font-semibold px-6 py-3.5 text-base hover:bg-brand-black hover:text-brand-cream transition-colors"
-        >
-          I've used Megs before
-        </a>
-      </div>
-    </section>
+      </header>
 
-    <!-- Feature cards -->
-    <section class="px-6 pb-20 max-w-6xl mx-auto">
-      <div class="grid md:grid-cols-3 gap-4">
-        {features.map(f => (
-          <div class="bg-brand-cream rounded-2xl p-6 shadow-brand-sm">
-            <h2 class="font-display text-2xl mb-3">{f.title}</h2>
-            <p class="font-body text-sm leading-relaxed text-brand-black/80">{f.body}</p>
+      <!-- Hero -->
+      <section>
+        <div class="px-6 pt-10 pb-10 max-w-6xl mx-auto grid lg:grid-cols-[1.15fr_1fr] gap-12 items-center">
+        <div>
+          <!-- Pill tag (mono - matches app metadata style) -->
+          <div class="inline-flex items-center gap-2 rounded-full bg-brand-black text-brand-cream font-scoreboard text-[11px] font-bold tracking-widest uppercase px-4 py-2 mb-8">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-orange"></span>
+            Built for the weekly kickabout
           </div>
-        ))}
+
+          <!-- Hero h1 - the one true Bagel moment -->
+          <h1 class="font-display text-5xl md:text-7xl lg:text-[5.5rem] leading-[0.95] mb-6">
+            Runs your<br />five-a-side.<br />
+            <span class="text-brand-orange">Roasts</span> your mates.
+          </h1>
+
+          <p class="font-body text-lg md:text-xl max-w-xl mb-8 opacity-90">
+            The app for the weekly game. Megs sorts the teams, handles payments and gives your group chat the stats it's been crying out for.
+          </p>
+
+          <div class="flex flex-wrap gap-3">
+            <a
+              href="https://app.megs.club/create"
+              class="inline-flex items-center justify-center rounded-xl bg-brand-black text-brand-cream font-semibold px-6 py-3.5 text-base shadow-brand-cream hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+            >
+              Get your group on MEGS →
+            </a>
+            <a
+              href="#how-it-works"
+              class="inline-flex items-center justify-center rounded-xl bg-brand-green border-2 border-brand-black text-brand-black font-semibold px-6 py-3.5 text-base hover:bg-brand-black hover:text-brand-cream transition-colors"
+            >
+              See a fixture in action
+            </a>
+          </div>
+
+        </div>
+
+        <!-- ===== Screenshot placeholder: HERO FIXTURE CARD ===== -->
+        <div class="relative mx-auto w-full max-w-sm">
+          <!-- Stat callout: celebration -->
+          <div class="absolute -top-5 -left-8 z-10 rotate-3 inline-flex items-center gap-1.5 rounded-full bg-brand-black text-brand-cream font-scoreboard text-xs font-bold tracking-widest uppercase px-3.5 py-2 shadow-brand-sm">
+            <span class="text-sm leading-none">🥇</span>
+            Ryan: MOTM x3
+          </div>
+
+          <!-- Stat callout: roast -->
+          <div class="absolute -bottom-2 -right-4 z-10 -rotate-3 inline-flex items-center gap-1.5 rounded-full bg-brand-orange text-brand-cream font-scoreboard text-xs font-bold tracking-widest uppercase px-3.5 py-2 shadow-brand-sm">
+            <span class="text-sm leading-none">💀</span>
+            Ali Dia: 7-loss streak
+          </div>
+
+          <!-- Hero fixture card mockup (code-built, not a screenshot) -->
+          <div class="card-brand p-5 -rotate-2">
+            <!-- Top metadata row -->
+            <div class="flex items-center justify-between font-scoreboard text-[10px] font-bold uppercase tracking-widest text-brand-black/55 mb-3">
+              <span>Tuesday · 19:00</span>
+              <span>Fixture #214</span>
+            </div>
+
+            <!-- Hero title -->
+            <h3 class="font-display text-[2rem] leading-[0.95] mb-4">
+              Cage 3.<br />
+              Kick-off in 4 hrs.
+            </h3>
+
+            <!-- Divider -->
+            <div class="border-t border-dashed border-brand-black/15 mb-4"></div>
+
+            <!-- IN/OUT count -->
+            <p class="font-scoreboard text-[10px] font-bold uppercase tracking-widest text-brand-black/55 mb-3">10 in · 0 out</p>
+
+            <!-- Player chips -->
+            <div class="flex flex-wrap gap-1.5 mb-5">
+              {heroPlayers.map(name => (
+                <span class="px-2.5 py-1 rounded-md bg-brand-black text-brand-cream font-body font-semibold text-xs">{name}</span>
+              ))}
+            </div>
+
+            <!-- Auto-balanced inner panel -->
+            <div class="rounded-xl border-2 border-brand-black/15 bg-brand-green/25 p-4 mb-4">
+              <p class="font-scoreboard text-[10px] font-bold uppercase tracking-widest text-brand-black/55 mb-2">Teams (auto-balanced)</p>
+              <div class="flex items-baseline justify-between font-display text-2xl">
+                <span>Bibs</span>
+                <span class="font-scoreboard text-xs tracking-widest text-brand-black/50">vs</span>
+                <span>Skins</span>
+              </div>
+            </div>
+
+            <!-- Payment info -->
+            <div class="flex items-center justify-between text-sm font-body">
+              <span class="text-brand-black/65">£6 each · paid by 9</span>
+              <span class="text-brand-orange font-bold">Ali Dia owes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Free reassurance, centered under hero -->
+      <div class="px-6 pb-16 max-w-6xl mx-auto flex justify-center">
+        <p class="font-scoreboard text-sm font-extrabold uppercase tracking-widest text-brand-cream flex items-center gap-2">
+          <span class="text-brand-orange text-lg leading-none">✔</span>
+          Free for organisers. Forever.
+        </p>
+      </div>
+      </section>
+    </div>
+
+    <!-- ============== THE REALITY ============== -->
+    <section class="bg-brand-black text-brand-cream">
+      <div class="px-6 py-24 max-w-5xl mx-auto">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest text-brand-orange mb-6">The reality</p>
+        <h2 class="font-body font-extrabold text-4xl md:text-6xl leading-tight tracking-tight mb-12 max-w-3xl">
+          Every week, it's the same story…
+        </h2>
+
+        <!-- Chat-bubble stack -->
+        <div class="space-y-3 max-w-md mb-12">
+          <div class="bg-brand-cream/10 backdrop-blur-sm rounded-2xl rounded-bl-sm px-5 py-3 text-base font-body">
+            "Who's actually in?"
+          </div>
+          <div class="bg-brand-cream/10 backdrop-blur-sm rounded-2xl rounded-bl-sm px-5 py-3 text-base font-body ml-6">
+            "Can someone send the teams?"
+          </div>
+          <div class="bg-brand-cream/10 backdrop-blur-sm rounded-2xl rounded-bl-sm px-5 py-3 text-base font-body ml-12">
+            "Wait, has everyone paid?"
+          </div>
+          <div class="bg-brand-cream/10 backdrop-blur-sm rounded-2xl rounded-bl-sm px-5 py-3 text-base font-body ml-20">
+            "Who's got change for £6?"
+          </div>
+        </div>
+
+        <p class="font-body text-lg md:text-xl mb-6 max-w-2xl">
+          47 messages later and you've still got:
+        </p>
+        <ul class="font-body text-lg md:text-xl space-y-2 mb-12 max-w-2xl">
+          <li class="flex gap-3"><span class="text-brand-orange shrink-0">×</span> uneven teams</li>
+          <li class="flex gap-3"><span class="text-brand-orange shrink-0">×</span> late dropouts</li>
+          <li class="flex gap-3"><span class="text-brand-orange shrink-0">×</span> someone still owed £6 since last summer</li>
+          <li class="flex gap-3"><span class="text-brand-orange shrink-0">×</span> and one lad quietly stacking his own side</li>
+        </ul>
+
+        <p class="font-body font-extrabold text-3xl md:text-5xl leading-tight tracking-tight">
+          You still play.<br />
+          But it's chaos.
+        </p>
       </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="px-6 py-8 max-w-6xl mx-auto border-t-2 border-brand-black/15 text-sm font-body opacity-70">
-      <div class="flex flex-wrap items-center justify-between gap-4">
-        <span>© {new Date().getFullYear()} Megs</span>
-        <div class="flex gap-6">
-          <a href="https://app.megs.club" class="hover:opacity-100 opacity-70">Open app</a>
-          <a href="/privacy" class="hover:opacity-100 opacity-70">Privacy</a>
+    <!-- ============== THE FIX ============== -->
+    <section class="bg-pitch">
+      <div class="px-6 py-24 max-w-5xl mx-auto text-center">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest opacity-80 mb-6">The fix</p>
+        <!-- Bagel - punchline hero moment -->
+        <h2 class="font-display text-5xl md:text-7xl leading-[0.95] mb-10">
+          Megs runs your<br />game for you.
+        </h2>
+        <div class="font-body font-extrabold text-3xl md:text-4xl space-y-1 mb-10 opacity-90 tracking-tight">
+          <p>No chasing.</p>
+          <p>No spreadsheets.</p>
+          <p>No arguments.</p>
+        </div>
+        <!-- Bagel - final punchline -->
+        <p class="font-display text-4xl md:text-5xl text-brand-orange">
+          Just turn up and play.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============== PRICING STRIP ============== -->
+    <section class="bg-brand-black text-brand-cream">
+      <div class="px-6 py-16 max-w-4xl mx-auto text-center">
+        <div class="inline-flex items-center gap-2 rounded-full bg-brand-green text-brand-black font-scoreboard text-[11px] font-bold tracking-widest uppercase px-4 py-2 mb-6">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-orange"></span>
+          Pricing
+        </div>
+        <h2 class="font-body font-extrabold text-3xl md:text-5xl tracking-tight mb-5">
+          Free for organisers. Forever.
+        </h2>
+        <p class="font-body text-lg md:text-xl max-w-2xl mx-auto opacity-85">
+          No subscription. No trial. Players only pay a small per-match fee when you choose to collect payments through Megs.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============== HOW IT WORKS ============== -->
+    <section id="how-it-works" class="bg-brand-cream text-brand-black">
+      <div class="px-6 py-24 max-w-6xl mx-auto">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest opacity-70 mb-6">How it works</p>
+        <h2 class="font-body font-extrabold text-4xl md:text-6xl leading-tight tracking-tight mb-16 max-w-3xl">
+          From group chat to first whistle in four steps.
+        </h2>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {steps.map((s, i) => (
+            <div class="flex flex-col gap-4">
+              <!-- Phone screenshot (steps 1-3) / punchline card (step 4) -->
+              {i < 3 && s.imageSrc && (
+                <div class="card-brand p-2 overflow-hidden">
+                  <img
+                    src={s.imageSrc}
+                    alt={`${s.title} - Megs app screenshot`}
+                    class="w-full h-auto block rounded-lg"
+                  />
+                </div>
+              )}
+              {i < 3 && !s.imageSrc && (
+                <div
+                  class="aspect-[9/19.5] rounded-2xl bg-brand-black/5 border-2 border-dashed border-brand-black/30 flex items-center justify-center text-center p-4"
+                >
+                  <p class="font-body text-xs text-brand-black/60 leading-relaxed">
+                    PNG 9:19.5 → <code>step-{i + 1}-{s.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png</code>
+                  </p>
+                </div>
+              )}
+              {i === 3 && (
+                <div
+                  class="aspect-[9/19.5] card-brand bg-brand-green text-brand-black p-6 relative overflow-hidden flex items-center justify-center text-center"
+                >
+                  <!-- Match result -->
+                  <div class="absolute top-4 left-3 z-20 rotate-3 inline-flex items-center gap-1.5 rounded-full bg-brand-black text-brand-cream font-scoreboard text-[11px] font-bold tracking-widest uppercase px-3 py-1.5 shadow-brand-sm">
+                    <span class="text-sm leading-none">🥊</span>
+                    Bibs 6 - 4 Skins
+                  </div>
+
+                  <!-- Centerpiece -->
+                  <p class="font-display text-4xl leading-[0.95] relative z-10">Game<br />on.</p>
+
+                  <!-- Hat-trick (highlight) -->
+                  <div class="absolute bottom-20 right-2 z-20 -rotate-3 inline-flex items-center gap-1.5 rounded-full bg-brand-orange text-brand-cream font-scoreboard text-[11px] font-bold tracking-widest uppercase px-3 py-1.5 shadow-brand-sm">
+                    <span class="text-sm leading-none">🎩</span>
+                    Joe: hat-trick
+                  </div>
+
+                  <!-- Ali Dia streak callback (7 in hero, now 8) -->
+                  <div class="absolute bottom-4 left-2 z-20 -rotate-3 inline-flex items-center gap-1.5 rounded-full bg-brand-black text-brand-cream font-scoreboard text-[11px] font-bold tracking-widest uppercase px-3 py-1.5 shadow-brand-sm">
+                    <span class="text-sm leading-none">💀</span>
+                    Ali Dia: 8-loss streak
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <p class="font-scoreboard text-sm text-brand-orange mb-1">{s.n}</p>
+                <h3 class="font-body font-extrabold text-2xl tracking-tight mb-2">{s.title}</h3>
+                <p class="font-body text-sm leading-relaxed text-brand-black/75">{s.body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== HOW BALANCING WORKS ============== -->
+    <section id="balancing" class="bg-brand-cream text-brand-black">
+      <div class="px-6 py-24 max-w-6xl mx-auto">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest text-brand-orange mb-6">How balancing works</p>
+        <h2 class="font-body font-extrabold text-4xl md:text-6xl leading-tight tracking-tight mb-16 max-w-3xl">
+          Teams that get fairer every week (and nobody moans about).
+        </h2>
+
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <div class="font-body text-lg leading-relaxed text-brand-black/85 space-y-5">
+            <p>Every player has a skill rating. Megs also tracks who's a goal threat and who actually tracks back. When you set up your next game, the algorithm runs thousands of combinations to balance skill, attack and defence across both sides.</p>
+            <p>Ratings update from every result, so the longer your group plays, the sharper the balancing gets. Megs even spreads the same players around week to week, so nobody ends up on the same side every game.</p>
+            <p class="font-extrabold text-brand-black">No captain politics. No bias. No one quietly stacking their own team. Just teams nobody picks a fight with.</p>
+          </div>
+
+          <!-- Balancing screenshot -->
+          <div class="card-brand mx-auto w-full max-w-sm p-3">
+            <img
+              src="/feature-balancing.jpg"
+              alt="Megs perfectly balanced teams: Yellows 446 vs Oranges 448 rating, balanced across goal threat and defensive work rate, with two columns of players"
+              class="w-full h-auto block rounded-lg"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== WHAT MEGS HANDLES ============== -->
+    <section id="features" class="bg-pitch">
+      <div class="px-6 py-24 max-w-6xl mx-auto">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest opacity-80 mb-6">What Megs handles</p>
+        <h2 class="font-body font-extrabold text-4xl md:text-6xl leading-tight tracking-tight mb-16 max-w-3xl">
+          Everything organising a game involves. None of the admin.
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          {features.map(f => (
+            <div class="card-brand p-6 flex flex-col gap-5">
+              {f.imageSrc ? (
+                <div class={`${f.imageAspect || 'aspect-[4/3]'} rounded-xl overflow-hidden bg-brand-cream`}>
+                  <img
+                    src={f.imageSrc}
+                    alt={`${f.title} - Megs app screenshot`}
+                    class={`w-full h-full object-cover ${f.imagePosition || 'object-center'}`}
+                  />
+                </div>
+              ) : (
+                <div
+                  class="aspect-[4/3] rounded-xl bg-brand-black/5 border-2 border-dashed border-brand-black/30 flex items-center justify-center text-center p-4"
+                >
+                  <p class="font-body text-xs text-brand-black/60 leading-relaxed">
+                    {f.note}<br /><code>{f.shot}.png</code>
+                  </p>
+                </div>
+              )}
+              <div>
+                <h3 class="font-body font-extrabold text-3xl tracking-tight mb-2">{f.title}</h3>
+                <p class="font-body text-base leading-relaxed text-brand-black/80">{f.body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== WHY PEOPLE USE MEGS ============== -->
+    <section id="why" class="bg-brand-cream text-brand-black">
+      <div class="px-6 py-24 max-w-5xl mx-auto">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest opacity-70 mb-6">Why people use Megs</p>
+        <h2 class="font-body font-extrabold text-4xl md:text-6xl leading-tight tracking-tight mb-8 max-w-3xl">
+          Because organising the game is the worst part.
+        </h2>
+        <p class="font-body font-extrabold text-3xl md:text-4xl text-brand-orange mb-12 tracking-tight">
+          Megs fixes that.
+        </p>
+
+        <ul class="font-body text-lg md:text-2xl space-y-3 max-w-2xl">
+          <li class="flex gap-4 items-baseline"><span class="font-scoreboard text-brand-orange text-xl shrink-0">✓</span> No more chasing replies</li>
+          <li class="flex gap-4 items-baseline"><span class="font-scoreboard text-brand-orange text-xl shrink-0">✓</span> No more picking teams</li>
+          <li class="flex gap-4 items-baseline"><span class="font-scoreboard text-brand-orange text-xl shrink-0">✓</span> No more awkward reshuffles</li>
+          <li class="flex gap-4 items-baseline"><span class="font-scoreboard text-brand-orange text-xl shrink-0">✓</span> No more "has everyone paid?"</li>
+        </ul>
+
+        <p class="font-display text-3xl md:text-5xl mt-12">Just better games.</p>
+      </div>
+    </section>
+
+    <!-- ============== SOCIAL PROOF ============== -->
+    <section class="bg-pitch">
+      <div class="px-6 py-20 max-w-5xl mx-auto text-center">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest opacity-80 mb-6">Used by organisers like you</p>
+        <p class="font-body font-extrabold text-3xl md:text-5xl leading-tight tracking-tight max-w-3xl mx-auto">
+          Built for weekly five-a-side games across the UK. Used by organisers who are done with the chaos.
+        </p>
+        <!-- Review strip -->
+        <div class="mt-12 grid md:grid-cols-3 gap-5 text-left">
+          {testimonials.map(t => (
+            <div class="card-brand p-6 flex flex-col gap-3">
+              <div class="text-brand-orange text-xl tracking-wider leading-none" aria-label="5 out of 5 stars">★★★★★</div>
+              <p class="font-body text-base leading-relaxed flex-1">"{t.quote}"</p>
+              <p class="font-scoreboard text-[11px] font-bold uppercase tracking-widest text-brand-black/60">{t.name} · {t.location}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== FOUNDER PANEL ============== -->
+    <section id="founder" class="bg-pitch">
+      <div class="px-6 py-24 max-w-5xl mx-auto">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest opacity-80 mb-8">From the founder</p>
+
+        <div class="grid md:grid-cols-[auto_1fr] gap-8 md:gap-10 items-center">
+          <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-brand-cream border-2 border-brand-black shadow-brand overflow-hidden mx-auto md:mx-0 shrink-0">
+            <Image src={eddiePhoto} alt="Eddie, founder of Megs" width={320} height={320} class="w-full h-full object-cover" />
+          </div>
+
+          <div>
+            <p class="font-body text-xl md:text-2xl leading-relaxed mb-6 max-w-2xl">
+              Hi, I'm Eddie. I've been organising the same weekly kickabout for years - and I built Megs because I couldn't take another "who's in?" message in the group chat. The pain's the same whether your game's been running 6 months or 16 years: chasing replies, picking teams, hounding people for fivers. Megs handles all of it. Just turn up and play.
+            </p>
+            <p class="font-scoreboard text-xs font-bold uppercase tracking-widest opacity-60">
+              Eddie · Founder · Manchester · Scunthorpe United fan
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== FAQ ============== -->
+    <section id="faq" class="bg-brand-cream text-brand-black">
+      <div class="px-6 py-24 max-w-4xl mx-auto">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest text-brand-orange mb-6">FAQ</p>
+        <h2 class="font-body font-extrabold text-4xl md:text-6xl leading-tight tracking-tight mb-12 max-w-3xl">
+          Questions, answered.
+        </h2>
+
+        <div class="space-y-3">
+          {faqs.map(item => (
+            <details class="group border-2 border-brand-black/15 rounded-2xl bg-brand-cream overflow-hidden">
+              <summary class="flex items-center justify-between gap-4 cursor-pointer p-5 font-body font-bold text-lg list-none [&::-webkit-details-marker]:hidden hover:bg-brand-black/[0.03] transition-colors">
+                <span>{item.q}</span>
+                <span class="text-brand-orange text-3xl leading-none shrink-0 transition-transform duration-200 group-open:rotate-45">+</span>
+              </summary>
+              <div class="px-5 pb-5 -mt-1 font-body text-base leading-relaxed text-brand-black/80">
+                {item.a}
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      <!-- Schema.org FAQPage markup for Google rich results -->
+      <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqs.map(item => ({
+          "@type": "Question",
+          "name": item.q,
+          "acceptedAnswer": { "@type": "Answer", "text": item.a }
+        }))
+      })} />
+    </section>
+
+    <!-- ============== FINAL CTA (+ pricing eyebrow) ============== -->
+    <section class="bg-brand-orange text-brand-black">
+      <div class="px-6 py-28 max-w-5xl mx-auto text-center">
+        <!-- Pricing pill -->
+        <div class="inline-flex items-center gap-2 rounded-full bg-brand-black text-brand-cream font-scoreboard text-[11px] font-bold tracking-widest uppercase px-4 py-2 mb-8">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-green"></span>
+          Free forever for organisers
+        </div>
+
+        <!-- Bagel - hero finale -->
+        <h2 class="font-display text-5xl md:text-7xl lg:text-8xl leading-[0.95] mb-6">
+          Your game.<br />Properly run.
+        </h2>
+
+        <p class="font-body text-lg md:text-xl mb-10 max-w-xl mx-auto opacity-85">
+          No subscription, no trial. Players only pay a small per-match fee when you use Megs to collect payments.
+        </p>
+
+        <a
+          href="https://app.megs.club/create"
+          class="inline-flex items-center justify-center rounded-xl bg-brand-black text-brand-cream font-semibold px-8 py-4 text-lg shadow-brand-cream hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+        >
+          Get your group on MEGS →
+        </a>
+      </div>
+    </section>
+
+    <!-- ============== FOOTER ============== -->
+    <footer class="bg-brand-black text-brand-cream">
+      <div class="px-6 py-12 max-w-6xl mx-auto">
+        <!-- Top row: logo + tagline -->
+        <div class="flex flex-wrap items-center justify-between gap-6 mb-8">
+          <a href="/" class="flex items-center gap-3">
+            <img src="/megs-logo-white.svg" alt="Megs" class="h-8 w-auto" />
+          </a>
+          <p class="font-display text-xl">Runs your game. Roasts your mates.</p>
+        </div>
+
+        <!-- Middle row: backstory + social icons -->
+        <div class="flex flex-wrap items-center justify-between gap-6 mb-8">
+          <p class="font-body text-sm opacity-75 max-w-lg leading-relaxed">
+            Built in Manchester, by a long suffering Scunthorpe United fan and recovering Pro Evo / Football Manager addict.
+          </p>
+          <div class="flex gap-3 items-center">
+            <a
+              href="https://instagram.com/megsclub"
+              target="_blank"
+              rel="noopener"
+              aria-label="Megs on Instagram"
+              class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 border-brand-cream/20 hover:border-brand-cream hover:bg-brand-cream hover:text-brand-black transition-colors"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+              </svg>
+            </a>
+            <a
+              href="https://tiktok.com/@megs.club"
+              target="_blank"
+              rel="noopener"
+              aria-label="Megs on TikTok"
+              class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 border-brand-cream/20 hover:border-brand-cream hover:bg-brand-cream hover:text-brand-black transition-colors"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.06z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Bottom row: copyright + links -->
+        <div class="flex flex-wrap items-center justify-between gap-4 text-sm font-body opacity-70 border-t border-brand-cream/15 pt-6">
+          <span>© {new Date().getFullYear()} Megs</span>
+          <div class="flex gap-6">
+            <a href="https://app.megs.club" class="hover:opacity-100">Open app</a>
+            <a href="/privacy" class="hover:opacity-100">Privacy</a>
+          </div>
         </div>
       </div>
     </footer>

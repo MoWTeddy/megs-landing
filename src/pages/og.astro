@@ -1,0 +1,55 @@
+---
+// OG image preview - this page renders at exactly 1200x630 px.
+// To capture: set your browser viewport to 1200x630 and screenshot the whole page,
+// OR use a tool like CleanShot to capture this URL at exact dimensions.
+// Save the result to public/og-image.png to update the social preview.
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>OG image preview</title>
+    <meta name="robots" content="noindex" />
+  </head>
+  <body style="margin:0; padding:0; background:#666;">
+    <!-- The 1200x630 OG canvas -->
+    <div
+      class="bg-pitch-glow text-brand-black"
+      style="width:1200px; height:630px; padding:60px 70px; position:relative; overflow:hidden; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between;"
+    >
+      <!-- Top row: logo + pricing pill -->
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <img src="/megs-logo.svg" alt="Megs" style="height:48px; width:auto;" />
+        <div class="bg-brand-black text-brand-cream font-scoreboard font-bold uppercase tracking-widest" style="padding:10px 18px; border-radius:9999px; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+          <span style="width:8px; height:8px; border-radius:50%; background:#FF5B1F; display:inline-block;"></span>
+          Free for organisers. Forever.
+        </div>
+      </div>
+
+      <!-- Hero block -->
+      <div>
+        <h1 class="font-display" style="font-size:108px; line-height:0.92; margin:0 0 24px; max-width:900px;">
+          Runs your<br />five-a-side.<br />
+          <span style="color:#FF5B1F;">Roasts</span> your mates.
+        </h1>
+        <p class="font-body" style="font-size:28px; line-height:1.3; margin:0; max-width:760px; opacity:0.85;">
+          The app for the weekly game. www.megs.club
+        </p>
+      </div>
+
+      <!-- Floating stat pills (bottom-right corner) -->
+      <div style="position:absolute; bottom:50px; right:60px; display:flex; flex-direction:column; gap:14px; align-items:flex-end;">
+        <div class="bg-brand-black text-brand-cream font-scoreboard font-bold uppercase tracking-widest" style="padding:12px 18px; border-radius:9999px; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:3px 3px 0 #0E0F0C; transform:rotate(3deg);">
+          <span style="font-size:18px;">🥇</span>
+          Ryan: MOTM x3
+        </div>
+        <div class="bg-brand-orange text-brand-cream font-scoreboard font-bold uppercase tracking-widest" style="padding:12px 18px; border-radius:9999px; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:3px 3px 0 #0E0F0C; transform:rotate(-3deg);">
+          <span style="font-size:18px;">💀</span>
+          Ali Dia: 7-loss streak
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

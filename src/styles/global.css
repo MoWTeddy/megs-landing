@@ -1,21 +1,26 @@
+/* Brand fonts - Inter Tight + Bagel Fat One + JetBrains Mono (matches app/src/index.css) */
+@import url('https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Inter+Tight:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@700;800&display=swap');
 @import "tailwindcss";
 
-/* Brand fonts — load Inter Tight + Bagel Fat One from Google */
-@import url('https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Inter+Tight:wght@400;500;600;700;800&display=swap');
-
 @theme {
-  /* Brand primitives (mirrors fairteams-git/tailwind.config.ts) */
-  --color-brand-black: #0E0F0C;
-  --color-brand-cream: #F4EFE0;
-  --color-brand-green: #2BD06B;
-  --color-brand-orange: #FF5B1F;
+  /* Brand primitives (full 6-colour palette) */
+  --color-brand-black: #0E0F0C;   /* Boot Black - works like grey */
+  --color-brand-cream: #F4EFE0;   /* Panini Cream - card surfaces */
+  --color-brand-green: #2BD06B;   /* Astro Green - signature surface */
+  --color-brand-orange: #FF5B1F;  /* Mercurial Orange - exclamation, never wallpaper */
+  --color-brand-pink: #FF6FA3;    /* Foil Pink - the wink. Rare, knowing, fun */
+  --color-brand-deep: #0E5C2E;    /* Pitch Deep - tonal counterweight to Astro. Backgrounds only */
 
   --font-display: "Bagel Fat One", Impact, sans-serif;
   --font-body: "Inter Tight", system-ui, sans-serif;
+  --font-scoreboard: "JetBrains Mono", monospace;
 
-  /* Brand shadow used throughout the app */
+  /* Brand shadow - values match app/tailwind.config.ts boxShadow */
   --shadow-brand: 5px 5px 0 #0E0F0C;
+  --shadow-brand-sm: 2px 2px 0 #0E0F0C;
   --shadow-brand-orange: 5px 5px 0 #FF5B1F;
+  /* Cream shadow - for black buttons that need contrast against dark/coloured surfaces */
+  --shadow-brand-cream: 5px 5px 0 #F4EFE0;
 }
 
 body {
@@ -23,4 +28,39 @@ body {
   background: var(--color-brand-green);
   color: var(--color-brand-black);
   -webkit-font-smoothing: antialiased;
+}
+
+/* Astroturf stripe on green surfaces - matches app .bg-pitch (src/index.css:274-283) */
+.bg-pitch {
+  background-color: var(--color-brand-green);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0px,
+    transparent 9px,
+    rgba(0, 0, 0, 0.07) 9px,
+    rgba(0, 0, 0, 0.07) 11px
+  );
+}
+
+/* Hero: stripe + a soft top-right white bloom on top */
+.bg-pitch-glow {
+  background-color: var(--color-brand-green);
+  background-image:
+    radial-gradient(ellipse 70% 60% at 85% 10%, rgba(255, 255, 255, 0.40), transparent 55%),
+    repeating-linear-gradient(
+      -45deg,
+      transparent 0px,
+      transparent 9px,
+      rgba(0, 0, 0, 0.07) 9px,
+      rgba(0, 0, 0, 0.07) 11px
+    );
+}
+
+/* Brand card - cream surface, solid 2px Boot Black border + 5px offset shadow.
+   Matches app .card-brand (src/index.css:117-122) - the border is what gives the shadow its heft. */
+.card-brand {
+  background: var(--color-brand-cream);
+  border: 2px solid var(--color-brand-black);
+  box-shadow: var(--shadow-brand);
+  border-radius: 1rem;
 }

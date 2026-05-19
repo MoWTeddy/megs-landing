@@ -1,0 +1,37 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="404 - Lost the ball | Megs" description="This page took the day off. The game's still on - head back to home.">
+  <main class="bg-pitch-glow text-brand-black min-h-screen flex items-center">
+    <div class="px-6 py-24 max-w-3xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 rounded-full bg-brand-black text-brand-cream font-scoreboard text-[11px] font-bold tracking-widest uppercase px-4 py-2 mb-8">
+        <span class="w-1.5 h-1.5 rounded-full bg-brand-orange"></span>
+        404 · Lost the ball
+      </div>
+
+      <h1 class="font-display text-6xl md:text-8xl leading-[0.95] mb-6">
+        Into<br />row Z. <span class="inline-block">⚽</span>
+      </h1>
+
+      <p class="font-body text-lg md:text-xl max-w-xl mx-auto mb-10 opacity-85">
+        This page took the day off. The game's still on - head back to home and we'll pretend this never happened.
+      </p>
+
+      <div class="flex flex-wrap gap-3 justify-center">
+        <a
+          href="/"
+          class="inline-flex items-center justify-center rounded-xl bg-brand-black text-brand-cream font-semibold px-6 py-3.5 text-base shadow-brand-cream hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+        >
+          Back to Megs →
+        </a>
+        <a
+          href="https://app.megs.club"
+          class="inline-flex items-center justify-center rounded-xl bg-brand-green border-2 border-brand-black text-brand-black font-semibold px-6 py-3.5 text-base hover:bg-brand-black hover:text-brand-cream transition-colors"
+        >
+          Open the app
+        </a>
+      </div>
+    </div>
+  </main>
+</Layout>
