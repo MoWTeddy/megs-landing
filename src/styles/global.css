@@ -42,11 +42,13 @@ body {
   );
 }
 
-/* Hero: stripe + a soft top-right white bloom on top */
+/* Hero: stripe + a soft white bloom behind the fixture card.
+   Desktop (lg+): card sits top-right, so bloom is top-right.
+   Mobile (<lg): card stacks below the text, so bloom drops to bottom-centre. */
 .bg-pitch-glow {
   background-color: var(--color-brand-green);
   background-image:
-    radial-gradient(ellipse 70% 60% at 85% 10%, rgba(255, 255, 255, 0.40), transparent 55%),
+    radial-gradient(ellipse 90% 45% at 50% 78%, rgba(255, 255, 255, 0.40), transparent 55%),
     repeating-linear-gradient(
       -45deg,
       transparent 0px,
@@ -54,6 +56,20 @@ body {
       rgba(0, 0, 0, 0.07) 9px,
       rgba(0, 0, 0, 0.07) 11px
     );
+}
+
+@media (min-width: 1024px) {
+  .bg-pitch-glow {
+    background-image:
+      radial-gradient(ellipse 70% 60% at 85% 10%, rgba(255, 255, 255, 0.40), transparent 55%),
+      repeating-linear-gradient(
+        -45deg,
+        transparent 0px,
+        transparent 9px,
+        rgba(0, 0, 0, 0.07) 9px,
+        rgba(0, 0, 0, 0.07) 11px
+      );
+  }
 }
 
 /* Brand card - cream surface, solid 2px Boot Black border + 5px offset shadow.

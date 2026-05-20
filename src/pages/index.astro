@@ -3,6 +3,30 @@ import Layout from '../layouts/Layout.astro';
 import { Image } from 'astro:assets';
 import eddiePhoto from '../assets/eddie.png';
 
+import miranda from '../assets/players/Miranda.jpg';
+import tarabt from '../assets/players/Adel Tarabt.jpg';
+import aliDia from '../assets/players/Ali Dia.jpg';
+import hooper from '../assets/players/Gary Hooper.jpg';
+import asprilla from '../assets/players/Asprilla.jpg';
+import higuita from '../assets/players/Rene Higuita.jpg';
+import kinkladze from '../assets/players/Georgi Kinkladze.jpg';
+import akinfenwa from '../assets/players/Akinfenwa.jpg';
+import vandenBorre from '../assets/players/Anthony Vanden Borre.jpg';
+import larcos from '../assets/players/Roberto Larcos.jpg';
+
+const heroAvatars = [
+  { src: miranda, name: 'Miranda' },
+  { src: tarabt, name: 'Adel Tarabt' },
+  { src: aliDia, name: 'Ali Dia' },
+  { src: hooper, name: 'Gary Hooper' },
+  { src: asprilla, name: 'Asprilla' },
+  { src: higuita, name: 'Rene Higuita' },
+  { src: kinkladze, name: 'Georgi Kinkladze' },
+  { src: akinfenwa, name: 'Akinfenwa' },
+  { src: vandenBorre, name: 'Anthony Vanden Borre' },
+  { src: larcos, name: 'Roberto Larcos' },
+];
+
 const steps = [
   { n: '01', title: 'Set it up', body: 'Create a recurring game in seconds - time, pitch, players. And automate it, if you want.', imageSrc: '/step-1-set-it-up.jpg' },
   { n: '02', title: 'Share it', body: 'Send a link. Players join and pay to play via Apple Pay or Google Pay (or cash, if you must).', imageSrc: '/step-2-share-it.png' },
@@ -54,8 +78,6 @@ const navLinks = [
   { href: '#features', label: 'What Megs does' },
   { href: '#why', label: 'Why Megs' },
 ];
-
-const heroPlayers = ['Si', 'Ryan', 'Baz', 'Joe', 'Dec', 'Rob', 'Ash', 'Ali Dia', 'Will', 'Pete'];
 
 const testimonials = [
   {
@@ -172,7 +194,7 @@ const faqs = [
           <!-- Stat callout: celebration -->
           <div class="absolute -top-5 -left-8 z-10 rotate-3 inline-flex items-center gap-1.5 rounded-full bg-brand-black text-brand-cream font-scoreboard text-xs font-bold tracking-widest uppercase px-3.5 py-2 shadow-brand-sm">
             <span class="text-sm leading-none">🥇</span>
-            Ryan: MOTM x3
+            Gary: MOTM x3
           </div>
 
           <!-- Stat callout: roast -->
@@ -201,10 +223,18 @@ const faqs = [
             <!-- IN/OUT count -->
             <p class="font-scoreboard text-[10px] font-bold uppercase tracking-widest text-brand-black/55 mb-3">10 in · 0 out</p>
 
-            <!-- Player chips -->
-            <div class="flex flex-wrap gap-1.5 mb-5">
-              {heroPlayers.map(name => (
-                <span class="px-2.5 py-1 rounded-md bg-brand-black text-brand-cream font-body font-semibold text-xs">{name}</span>
+            <!-- Player avatars -->
+            <div class="flex items-center mb-5">
+              {heroAvatars.map((p, i) => (
+                <Image
+                  src={p.src}
+                  alt={p.name}
+                  width={64}
+                  height={64}
+                  loading="eager"
+                  class={`w-8 h-8 rounded-full border-2 border-brand-cream object-cover ${i > 0 ? '-ml-2' : ''}`}
+                  style={`z-index: ${heroAvatars.length - i}`}
+                />
               ))}
             </div>
 
