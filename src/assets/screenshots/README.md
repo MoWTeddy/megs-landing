@@ -18,10 +18,10 @@ Drop captured PNGs in this directory using the exact filenames below. Astro's `<
 | `step-2-share.png` | 9:19.5 phone | The share screen or the joining flow as seen by a player | "How it works" step 2 |
 | `step-3-teams.png` | 9:19.5 phone | The auto-balanced teams view (bibs/skins, ratings visible) | "How it works" step 3 |
 | `balancing-ratings.png` | 4:3 landscape slice | Player-ratings panel OR the auto-balanced teams view showing each player's rating | "How balancing works" section |
-| `feature-teams.png` | 4:3 landscape slice | Just the balanced-teams panel, no app chrome around it | "What Megs handles" - Teams card |
-| `feature-availability.png` | 4:3 landscape slice | The IN/OUT/BENCH player list | "What Megs handles" - Who's playing card |
-| `feature-payments.png` | 4:3 landscape slice | The payments panel showing who's paid and who hasn't | "What Megs handles" - Payments card |
-| `feature-stats.png` | 4:3 landscape slice | A leaderboard / form table / Man of the Match summary | "What Megs handles" - Stats card |
+| `feature-teams.webp` | 4:3 landscape slice | Just the balanced-teams panel, no app chrome around it | "What Megs handles" - Teams card |
+| `feature-availability.webp` | 4:3 landscape slice | The IN/OUT/BENCH player list | "What Megs handles" - Who's playing card |
+| `feature-payments.webp` | 4:3 landscape slice | The payments panel showing who's paid and who hasn't | "What Megs handles" - Payments card |
+| `feature-stats.webp` | 4:3 landscape slice | A leaderboard / form table / Man of the Match summary | "What Megs handles" - Stats card |
 
 ## Optional / later
 
