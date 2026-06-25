@@ -47,7 +47,17 @@ Some groups charge for games. When they do:
 - **Refunds are issued by your organiser** from their Stripe account, at their discretion and in line with how their group runs. Megs provides the buttons; the organiser makes the call. If you have a problem with a payment or refund, contact your organiser first. We can help with technical issues but we don't control whether a refund is given.
 - Where a group takes **cash** instead, that's entirely between you and your organiser - Megs only records that it was marked paid.
 
-If you're an **organiser**, you additionally agree that: you're responsible for your own Stripe account and tax obligations; you'll only charge players for genuine games; you'll handle refunds and disputes fairly; and you won't use Megs to take payment for anything other than your group's football activities.
+**If you're an organiser**, you additionally agree that:
+
+- You are **18 or over**.
+- You'll only collect money for **genuine football games you're organising**, with **accurate** details (date, venue, price, and number of spaces).
+- You **won't** use Megs to take payment for betting, prize pools, gambling, alcohol, or any restricted or illegal goods or services.
+- You'll **handle cancellations and refunds fairly** and in line with how you've told your players your group runs.
+- You're responsible for your **own Stripe account** - including the identity verification Stripe requires - and for complying with **Stripe's terms** and acceptable-use rules.
+- You're responsible for your **own tax position and any reporting obligations** that apply to the money you collect.
+- Refunds, chargebacks, and disputes on your games are **settled against your Stripe balance, not Megs'.**
+
+We may suspend or remove a group's ability to take payments if these are breached.
 
 ---
 
