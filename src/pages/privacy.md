@@ -5,14 +5,14 @@ title: "Privacy - Megs"
 
 # Megs - Privacy Notice
 
-**Last updated:** May 2026.
+**Last updated:** June 2026.
 **Contact:** `hello@megs.club`
 
 ---
 
 ## 1. Who we are and what Megs is
 
-Megs is a mobile-first web app that helps football groups manage their weekly games - sign-ups, team balancing, payments, results, and stats. You'll use it as either:
+Megs is a mobile-first app - available on the web at `app.megs.club` and as native iOS and Android apps - that helps football groups manage their weekly games - sign-ups, team balancing, payments, results, and stats. You'll use it as either:
 - A **player** - signed up to a group by an admin or via an invite link.
 - An **admin** - running one or more groups for your friends/colleagues.
 
@@ -42,8 +42,9 @@ This policy explains what personal data we collect about you when you use Megs, 
 | **Skill rating + rating history** | Team balancing engine; leaderboards |
 | **MOTM votes you cast and received** | Voting feature; player profile |
 | **Dropout log** (if you drop out or get removed) | So your admin can see what happened |
-| **Push notification subscriptions** (browser endpoint + crypto keys) | Sending you push notifications, only if you've enabled them |
+| **Push notification subscriptions** (web browser endpoint + crypto keys, or a native device token from Apple/Google) | Sending you push notifications, only if you've enabled them |
 | **Login timestamps + IP** (held by Supabase Auth) | Security monitoring, account abuse detection |
+| **Product-usage events** (screens viewed, key actions like sign-up, group creation, game sign-up - tied to a pseudonymous ID, processed by PostHog) | Understanding how Megs is used so we can improve it. Not used for advertising. |
 
 ### 2.3 Payment data
 
@@ -57,8 +58,9 @@ If your group uses paid games:
 
 - We do **not** sell, rent, or share your data with advertisers.
 - We do **not** profile you for behavioural advertising.
+- We do **not** track you across other apps or websites, and we do not use any advertising or device-identifier (IDFA / AAID) tracking.
 
-If we ever add analytics or product-usage tracking, we'll update this notice first and (where required) ask for your consent.
+We do use privacy-friendly product analytics (PostHog, EU-hosted) to understand how Megs is used so we can improve it - see the analytics row in 2.2 and the processor table in section 4. This is usage data only (which screens/actions), never your messages or payment details.
 
 ---
 
@@ -66,12 +68,12 @@ If we ever add analytics or product-usage tracking, we'll update this notice fir
 
 | Field | Visible to fellow group members | Visible to your group admin | Visible to you only |
 |---|---|---|---|
-| Name, avatar, favourite club | YES | YES | |
-| Skill rating, win/loss record, MOTM count, attendance | YES | YES | |
-| Goals you scored, fantasy points | YES | YES | |
-| Email | | | YES |
-| Phone number | (via API only - not shown in any UI) | | YES |
-| Payment status (paid / unpaid / refunded) | YES | YES | |
+| Name, avatar, favourite club | ✅ | ✅ | |
+| Skill rating, win/loss record, MOTM count, attendance | ✅ | ✅ | |
+| Goals you scored, fantasy points | ✅ | ✅ | |
+| Email | | | ✅ |
+| Phone number | (via API only - not shown in any UI) | | ✅ |
+| Payment status (paid / unpaid / refunded) | ✅ | ✅ | |
 | Stripe customer ID, payment intent IDs | | (via API only) | |
 
 Different groups are isolated from each other - players in Group A cannot see anything about players in Group B unless they're in both groups.
@@ -92,6 +94,9 @@ We use the following processors. Each is a separate company you have a relations
 | **Resend** | Transactional emails (password reset, payment confirmation, reschedule notices) | Your email, the email content | US (with EU sub-processors) | [resend.com/legal/privacy-policy](https://resend.com/legal/privacy-policy) |
 | **Sentry** | Error reporting & masked session replays | Stack traces, browser metadata, **masked** UI text (we set `maskAllText: true` and `blockAllMedia: true`) | EU (Frankfurt) | [sentry.io/privacy](https://sentry.io/privacy) |
 | **Google** (optional) | Google sign-in if you choose this method | Email, basic profile from your Google account | US | [policies.google.com/privacy](https://policies.google.com/privacy) |
+| **PostHog** | Product-usage analytics (improving the app) | Pseudonymous usage events (screens/actions), device/app metadata | EU | [posthog.com/privacy](https://posthog.com/privacy) |
+| **Apple** (iOS app) / **Google Firebase** (Android app) | Delivering push notifications to the native apps | A device push token, only if you enable notifications | US | [apple.com/legal/privacy](https://www.apple.com/legal/privacy/) / [firebase.google.com/support/privacy](https://firebase.google.com/support/privacy) |
+| **Capgo** | Delivering over-the-air app updates to the native apps | App version + a device identifier for update delivery | EU | [capgo.app/privacy](https://capgo.app/privacy) |
 
 We do **not** sell your data to anyone.
 
@@ -107,6 +112,7 @@ We do **not** sell your data to anyone.
 | Storing your skill rating and game stats | **Legitimate interest** - running team balancing and leaderboards |
 | Sending you push notifications | **Consent** - only when you've enabled them in your browser |
 | Logging errors via Sentry | **Legitimate interest** - debugging and stability |
+| Product-usage analytics via PostHog | **Legitimate interest** - improving the app (usage data only, no advertising) |
 | Retaining payment records | **Legal obligation** - HMRC / VAT record-keeping |
 
 ---
@@ -115,7 +121,7 @@ We do **not** sell your data to anyone.
 
 | Data | Retention |
 |---|---|
-| Account, profile, game history | Until you ask us to delete it (or you delete it yourself when we add self-delete). |
+| Account, profile, game history | Until you delete your account (Profile → Danger zone → Delete my account). |
 | Payment records (Stripe customer IDs, transaction history) | 7 years (UK / HMRC requirement for tax record-keeping) |
 | Auth logs (sign-in IPs, sessions) | 90 days (Supabase default) |
 | Error reports in Sentry | 90 days |
@@ -132,9 +138,9 @@ You can:
 
 1. **Access** - ask for a copy of the personal data we hold about you.
 2. **Rectify** - fix anything that's wrong. Most of this you can do yourself in your profile.
-3. **Erase** ("be forgotten") - ask us to delete your account and data.
+3. **Erase** ("be forgotten") - delete your own account in-app (Profile → Danger zone → Delete my account), or email `hello@megs.club` if you need help.
 4. **Restrict / object** - ask us to stop processing specific data for a specific reason.
-5. **Portability** - ask for your data in a machine-readable format.
+5. **Portability** - ask for your data in a machine-readable format. (Self-serve export is on the roadmap. Until then, email `hello@megs.club` and we'll send you a JSON/CSV bundle within 30 days, as required by UK GDPR.)
 6. **Withdraw consent** - for anything we process on a consent basis (push notifications, optional profile fields). Turning these off in-app is the easiest route.
 7. **Complain** to the [Information Commissioner's Office](https://ico.org.uk/make-a-complaint/).
 
@@ -162,10 +168,11 @@ No system is invulnerable. If we ever have a data breach affecting your informat
 
 Megs uses:
 
-- **Essential cookies** for authentication (set by Supabase Auth and stored in your browser's localStorage). Without these you can't log in.
-- **No tracking cookies, no analytics cookies, no advertising cookies.**
+- **Essential storage** for authentication (set by Supabase Auth and stored in your browser's localStorage). Without these you can't log in.
+- **Product analytics** (PostHog) stores a pseudonymous analytics identifier so we can count usage without identifying you to advertisers.
+- **No advertising cookies, and no cross-site or cross-app tracking.**
 
-We don't currently show a cookie banner because we only set essential storage, but if you'd like that to be more explicit, get in touch.
+We don't currently show a cookie banner because we only set essential storage plus first-party, non-advertising analytics, but if you'd like that to be more explicit, get in touch.
 
 ---
 
