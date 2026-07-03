@@ -1,0 +1,580 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// The wedge tool: free, no-signup team balancer. All client-side (localStorage) -
+// zero backend, zero contact with the app. Rungs 1-3 of the ghost-profile ladder:
+// balance teams -> record who won (silent Elo) -> share a streak card.
+// See main-repo memory project_balancer_wedge for the strategy.
+
+const faqs = [
+  {
+    q: 'How do you balance football teams fairly?',
+    a: 'Rate each player once (1-5 stars), and the balancer splits your squad so both sides are as close as possible in total ability - goalkeepers shared out first. If you record who won each week, it quietly learns your players’ real levels from results, so teams get fairer over time.',
+  },
+  {
+    q: 'Is this team picker really free?',
+    a: 'Yes - free, no signup, no app download. Your squad is saved on your device so next week you just hit "Make teams" again.',
+  },
+  {
+    q: 'Does it work for 5-a-side, 6-a-side and 7-a-side?',
+    a: 'Yes. It splits any number of players into two balanced sides - 10 for 5-a-side, 14 for 7-a-side, or odd numbers (one team just gets the extra player).',
+  },
+  {
+    q: 'Can it collect payments and track stats too?',
+    a: 'That’s the full Megs app - sign-ups, Apple Pay / Google Pay payments, auto-filled reserves and season-long stats, free for organisers at app.megs.club. This balancer is the taster.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+
+<Layout
+  title="Free Football Team Balancer - Fair 5-a-side Teams in Seconds | Megs"
+  description="Paste your player list and get perfectly balanced teams for 5, 6 or 7-a-side. Free, no signup. Record results and it learns your players - teams get fairer every week."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} slot="head" />
+  <main class="min-h-screen bg-pitch">
+    <!-- Header -->
+    <header class="px-6 pt-5 pb-2 max-w-3xl mx-auto flex items-center justify-between">
+      <a href="/" aria-label="Megs home"><img src="/megs-logo.svg" alt="Megs" class="h-8 w-auto" /></a>
+      <a
+        href="https://app.megs.club"
+        class="font-body font-bold text-sm bg-brand-black text-brand-cream px-4 py-2 rounded-lg shadow-brand-sm"
+      >Open the app</a>
+    </header>
+
+    <!-- Hero -->
+    <section class="px-6 pt-8 pb-6 max-w-3xl mx-auto text-center">
+      <h1 class="font-display text-4xl sm:text-5xl leading-[1.05] mb-3">
+        Fair teams.<br /><span class="text-brand-orange">In seconds.</span>
+      </h1>
+      <p class="font-body font-semibold text-brand-black/70 max-w-md mx-auto">
+        Paste your list, rate your players once, get balanced sides. Free - no signup, no download. It even learns your players week to week.
+      </p>
+    </section>
+
+    <!-- ============== THE TOOL ============== -->
+    <section class="px-4 pb-10 max-w-3xl mx-auto space-y-4">
+
+      <!-- Pending "who won?" (returns after the game) -->
+      <div id="pendingResult" class="hidden card-brand p-5">
+        <p class="font-display text-2xl mb-1">Who won?</p>
+        <p class="font-body text-sm text-brand-black/60 mb-4">Record the result and next week's teams get smarter.</p>
+        <div class="grid grid-cols-3 gap-2">
+          <button data-result="black" class="resultBtn font-body font-bold py-3 rounded-xl bg-brand-black text-brand-cream">⚫ Blacks</button>
+          <button data-result="draw" class="resultBtn font-body font-bold py-3 rounded-xl border-2 border-brand-black bg-brand-cream">🤝 Draw</button>
+          <button data-result="white" class="resultBtn font-body font-bold py-3 rounded-xl border-2 border-brand-black bg-white">⚪ Whites</button>
+        </div>
+        <button id="dismissPending" class="mt-3 w-full text-center font-body text-xs text-brand-black/50 underline underline-offset-2">Game didn't happen - skip</button>
+      </div>
+
+      <!-- Squad card -->
+      <div class="card-brand p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-display text-2xl">Your squad</h2>
+          <button id="clearSquad" class="hidden font-body text-xs text-brand-black/50 underline underline-offset-2">Clear squad</button>
+        </div>
+
+        <!-- Paste state -->
+        <div id="pasteState">
+          <textarea
+            id="pasteBox"
+            rows="7"
+            placeholder={'One name per line - or paste straight from your group chat:\n\n1. Kev\n2. Smithy\n3. Big Dave\n...'}
+            class="w-full font-body text-sm bg-white border-2 border-brand-black rounded-xl p-3 placeholder:text-brand-black/35 focus:outline-none"
+          ></textarea>
+          <button id="parseBtn" class="mt-3 w-full font-body font-bold py-3.5 rounded-xl bg-brand-black text-brand-cream shadow-brand-sm">
+            Add players →
+          </button>
+        </div>
+
+        <!-- List state -->
+        <div id="listState" class="hidden">
+          <p class="font-body text-xs text-brand-black/55 mb-3">Tap the stars to rate ability · 🧤 marks a keeper</p>
+          <ul id="playerList" class="divide-y divide-brand-black/10"></ul>
+          <div class="flex gap-2 mt-3">
+            <input id="addName" type="text" placeholder="Add a player..." class="flex-1 font-body text-sm bg-white border-2 border-brand-black rounded-xl px-3 py-2.5 placeholder:text-brand-black/35 focus:outline-none" />
+            <button id="addBtn" class="font-body font-bold px-4 rounded-xl border-2 border-brand-black bg-brand-cream">Add</button>
+          </div>
+          <button id="makeTeams" class="mt-4 w-full font-display text-xl py-4 rounded-xl bg-brand-green border-2 border-brand-black shadow-brand-sm">
+            ⚖️ Make teams
+          </button>
+        </div>
+      </div>
+
+      <!-- Teams card -->
+      <div id="teamsCard" class="hidden card-brand p-5">
+        <div class="flex items-center justify-between mb-1">
+          <h2 class="font-display text-2xl">Teams</h2>
+          <span id="balanceLabel" class="font-scoreboard text-[11px] tracking-wider uppercase text-brand-black/50"></span>
+        </div>
+        <div id="balanceBar" class="h-2 rounded-full overflow-hidden flex mb-4 border border-brand-black/20">
+          <div id="balanceLeft" class="bg-brand-black"></div>
+          <div id="balanceRight" class="bg-white"></div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <p class="font-scoreboard text-xs tracking-widest mb-2">⚫ BLACKS</p>
+            <ul id="teamBlack" class="font-body text-sm font-semibold space-y-1.5"></ul>
+          </div>
+          <div>
+            <p class="font-scoreboard text-xs tracking-widest mb-2">⚪ WHITES</p>
+            <ul id="teamWhite" class="font-body text-sm font-semibold space-y-1.5"></ul>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mt-5">
+          <button id="shuffleBtn" class="font-body font-bold py-3 rounded-xl border-2 border-brand-black bg-brand-cream">🔀 Shuffle</button>
+          <button id="copyBtn" class="font-body font-bold py-3 rounded-xl bg-brand-black text-brand-cream">Copy for WhatsApp</button>
+        </div>
+        <p class="font-body text-[11px] text-brand-black/50 text-center mt-3">After the game, come back and tap <strong>who won</strong> - the balancer learns your players from real results.</p>
+      </div>
+
+      <!-- Stats card -->
+      <div id="statsCard" class="hidden card-brand p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-display text-2xl">The record</h2>
+          <span id="gamesCount" class="font-scoreboard text-[11px] tracking-wider uppercase text-brand-black/50"></span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full font-body text-sm">
+            <thead>
+              <tr class="font-scoreboard text-[10px] tracking-widest uppercase text-brand-black/45 text-left">
+                <th class="py-1.5 pr-2">Player</th>
+                <th class="py-1.5 px-1 text-center">P</th>
+                <th class="py-1.5 px-1 text-center">W</th>
+                <th class="py-1.5 px-1 text-center">D</th>
+                <th class="py-1.5 px-1 text-center">L</th>
+                <th class="py-1.5 pl-2">Form</th>
+              </tr>
+            </thead>
+            <tbody id="statsBody" class="divide-y divide-brand-black/10"></tbody>
+          </table>
+        </div>
+        <button id="shareCardBtn" class="mt-4 w-full font-body font-bold py-3 rounded-xl bg-brand-orange text-white shadow-brand-sm">
+          📸 Share to the group chat
+        </button>
+      </div>
+    </section>
+
+    <!-- ============== CTA ============== -->
+    <section class="px-6 py-10 bg-brand-black text-brand-cream">
+      <div class="max-w-3xl mx-auto text-center">
+        <h2 class="font-display text-3xl mb-2">Megs does this every week. Automatically.</h2>
+        <p class="font-body text-sm opacity-80 max-w-md mx-auto mb-6">
+          Sign-ups from a link, Apple Pay &amp; Google Pay, reserves auto-filled when someone drops out - and teams balanced on ratings that learn from every result. Free for organisers.
+        </p>
+        <a href="https://app.megs.club/create" class="inline-block font-body font-bold bg-brand-green text-brand-black px-8 py-4 rounded-xl shadow-brand-cream">
+          Run your game on Megs →
+        </a>
+      </div>
+    </section>
+
+    <!-- ============== SEO / FAQ ============== -->
+    <section class="px-6 py-12 max-w-3xl mx-auto">
+      <h2 class="font-display text-3xl mb-6 text-center">Team picker FAQs</h2>
+      <div class="space-y-3">
+        {faqs.map((f) => (
+          <details class="card-brand p-5 group">
+            <summary class="font-body font-bold cursor-pointer list-none flex justify-between items-center">
+              {f.q}
+              <span class="text-brand-black/40 group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+            </summary>
+            <p class="font-body text-sm text-brand-black/70 mt-3 leading-relaxed">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="px-6 py-8 text-center">
+      <p class="font-body text-sm text-brand-black/60">
+        © {new Date().getFullYear()} Megs · <a href="/" class="underline underline-offset-2">megs.club</a> · <a href="/privacy" class="underline underline-offset-2">Privacy</a>
+      </p>
+    </footer>
+  </main>
+</Layout>
+
+<script>
+  // ── State ────────────────────────────────────────────────────────────────
+  type Player = {
+    id: number; name: string; stars: number; gk: boolean;
+    r: number;                 // hidden learned rating (Elo-ish) - never displayed
+    w: number; d: number; l: number;
+    form: ('W' | 'D' | 'L')[]; // most recent last
+    streak: number;            // +n win streak, -n losing streak
+  };
+  type Store = {
+    players: Player[];
+    nextId: number;
+    games: number;
+    // Teams awaiting a result (survives reload so "who won?" greets them post-game)
+    pending: { black: number[]; white: number[] } | null;
+  };
+
+  const KEY = 'megs:balancer:v1';
+  const seedR = (stars: number) => 1000 + (stars - 3) * 100;
+
+  const load = (): Store => {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) return JSON.parse(raw) as Store;
+    } catch { /* corrupt -> start fresh */ }
+    return { players: [], nextId: 1, games: 0, pending: null };
+  };
+  const store = load();
+  const save = () => localStorage.setItem(KEY, JSON.stringify(store));
+
+  const $ = (id: string) => document.getElementById(id)!;
+
+  // ── Parsing (WhatsApp-list friendly) ─────────────────────────────────────
+  function parseNames(text: string): string[] {
+    return text
+      .split('\n')
+      .map((l) =>
+        l
+          .replace(/^\s*[\d]+[\.\)\:]?\s*/, '')       // "1." / "2)" / "3:"
+          .replace(/^\s*[-*•⚽✅👍🏻-🏿]+\s*/u, '')       // bullets / emoji markers
+          .replace(/\s*\b(in|IN|In)\b[!.]*\s*$/, '')   // trailing "IN"
+          .trim()
+      )
+      .filter((n) => n.length > 0 && n.length <= 30)
+      .filter((n, i, a) => a.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i);
+  }
+
+  function addPlayers(names: string[]) {
+    for (const name of names) {
+      const existing = store.players.find((p) => p.name.toLowerCase() === name.toLowerCase());
+      if (existing) continue; // re-pasting the weekly list must never wipe stats
+      store.players.push({ id: store.nextId++, name, stars: 3, gk: false, r: seedR(3), w: 0, d: 0, l: 0, form: [], streak: 0 });
+    }
+    save();
+  }
+
+  // ── Balancing: GK split -> snake draft on hidden rating -> swap refinement ─
+  function makeTeams(jitter = 0): { black: Player[]; white: Player[] } {
+    const pool = [...store.players];
+    const eff = new Map(pool.map((p) => [p.id, p.r + (jitter ? (Math.random() - 0.5) * jitter : 0)]));
+    const byR = (a: Player, b: Player) => eff.get(b.id)! - eff.get(a.id)!;
+
+    const gks = pool.filter((p) => p.gk).sort(byR);
+    const out = pool.filter((p) => !p.gk).sort(byR);
+    const black: Player[] = [], white: Player[] = [];
+    gks.forEach((g, i) => (i % 2 === 0 ? black : white).push(g));
+
+    // Snake draft outfielders onto whichever side is behind
+    for (const p of out) {
+      const sum = (t: Player[]) => t.reduce((s, x) => s + eff.get(x.id)!, 0);
+      const target =
+        black.length < white.length ? black :
+        white.length < black.length ? white :
+        sum(black) <= sum(white) ? black : white;
+      target.push(p);
+    }
+
+    // Refinement: single swaps between sides while they shrink the avg gap
+    const avg = (t: Player[]) => (t.length ? t.reduce((s, x) => s + eff.get(x.id)!, 0) / t.length : 0);
+    let improved = true;
+    while (improved) {
+      improved = false;
+      for (const b of black) {
+        for (const w of white) {
+          if (b.gk !== w.gk) continue; // keep the keeper split intact
+          const cur = Math.abs(avg(black) - avg(white));
+          const nb = black.map((x) => (x === b ? w : x));
+          const nw = white.map((x) => (x === w ? b : x));
+          if (Math.abs(avg(nb) - avg(nw)) < cur - 0.01) {
+            black.splice(black.indexOf(b), 1, w);
+            white.splice(white.indexOf(w), 1, b);
+            improved = true;
+          }
+        }
+      }
+    }
+    return { black, white };
+  }
+
+  // ── Elo update on a recorded result ──────────────────────────────────────
+  function recordResult(winner: 'black' | 'draw' | 'white') {
+    if (!store.pending) return;
+    const side = (ids: number[]) => ids.map((id) => store.players.find((p) => p.id === id)).filter(Boolean) as Player[];
+    const black = side(store.pending.black);
+    const white = side(store.pending.white);
+    if (black.length && white.length) {
+      const avg = (t: Player[]) => t.reduce((s, p) => s + p.r, 0) / t.length;
+      const eBlack = 1 / (1 + Math.pow(10, (avg(white) - avg(black)) / 400));
+      const sBlack = winner === 'black' ? 1 : winner === 'draw' ? 0.5 : 0;
+      const K = 32;
+      const apply = (team: Player[], score: number, expected: number, res: 'W' | 'D' | 'L') => {
+        for (const p of team) {
+          p.r += K * (score - expected);
+          if (res === 'W') { p.w++; p.streak = p.streak > 0 ? p.streak + 1 : 1; }
+          if (res === 'D') { p.d++; p.streak = 0; }
+          if (res === 'L') { p.l++; p.streak = p.streak < 0 ? p.streak - 1 : -1; }
+          p.form = [...p.form, res].slice(-5);
+        }
+      };
+      apply(black, sBlack, eBlack, winner === 'black' ? 'W' : winner === 'draw' ? 'D' : 'L');
+      apply(white, 1 - sBlack, 1 - eBlack, winner === 'white' ? 'W' : winner === 'draw' ? 'D' : 'L');
+      store.games++;
+    }
+    store.pending = null;
+    save();
+    renderAll();
+  }
+
+  // ── Rendering ────────────────────────────────────────────────────────────
+  let lastTeams: { black: Player[]; white: Player[] } | null = null;
+
+  function renderSquad() {
+    const has = store.players.length > 0;
+    $('pasteState').classList.toggle('hidden', has);
+    $('listState').classList.toggle('hidden', !has);
+    $('clearSquad').classList.toggle('hidden', !has);
+    if (!has) return;
+    const ul = $('playerList');
+    ul.innerHTML = '';
+    for (const p of store.players) {
+      const li = document.createElement('li');
+      li.className = 'flex items-center gap-2 py-2';
+      const stars = [1, 2, 3, 4, 5]
+        .map((n) => `<button data-star="${n}" data-id="${p.id}" aria-label="${n} stars" class="text-base leading-none ${n <= p.stars ? '' : 'opacity-25'}">★</button>`)
+        .join('');
+      li.innerHTML = `
+        <span class="flex-1 truncate font-body font-semibold text-sm">${p.name}</span>
+        <span class="flex gap-0.5">${stars}</span>
+        <button data-gk="${p.id}" aria-label="Toggle goalkeeper" class="text-base leading-none ${p.gk ? '' : 'opacity-25 grayscale'}">🧤</button>
+        <button data-remove="${p.id}" aria-label="Remove ${p.name}" class="text-brand-black/35 font-bold px-1">×</button>`;
+      ul.appendChild(li);
+    }
+  }
+
+  function renderTeams() {
+    $('teamsCard').classList.toggle('hidden', !lastTeams);
+    if (!lastTeams) return;
+    const fill = (elId: string, team: Player[]) => {
+      const el = $(elId);
+      el.innerHTML = '';
+      for (const p of team) {
+        const li = document.createElement('li');
+        li.textContent = `${p.gk ? '🧤 ' : ''}${p.name}`;
+        el.appendChild(li);
+      }
+    };
+    fill('teamBlack', lastTeams.black);
+    fill('teamWhite', lastTeams.white);
+    const avg = (t: Player[]) => (t.length ? t.reduce((s, x) => s + x.r, 0) / t.length : 0);
+    const a = avg(lastTeams.black), b = avg(lastTeams.white);
+    const pctA = Math.round((a / (a + b)) * 100);
+    ($('balanceLeft') as HTMLElement).style.width = `${pctA}%`;
+    ($('balanceRight') as HTMLElement).style.width = `${100 - pctA}%`;
+    $('balanceLabel').textContent = Math.abs(pctA - 50) <= 1 ? 'PERFECTLY BALANCED' : `${pctA}–${100 - pctA}`;
+  }
+
+  function renderPending() {
+    $('pendingResult').classList.toggle('hidden', !store.pending);
+  }
+
+  function renderStats() {
+    const played = store.players.filter((p) => p.w + p.d + p.l > 0);
+    $('statsCard').classList.toggle('hidden', played.length === 0);
+    if (!played.length) return;
+    $('gamesCount').textContent = `${store.games} GAME${store.games === 1 ? '' : 'S'}`;
+    const dot = (r: string) => r === 'W' ? '🟢' : r === 'D' ? '⚪' : '🔴';
+    const rows = [...played].sort((x, y) => y.w - x.w || y.d - x.d);
+    $('statsBody').innerHTML = rows
+      .map((p) => `
+        <tr>
+          <td class="py-2 pr-2 font-semibold">${p.name}${p.streak >= 3 ? ' 🔥' : ''}</td>
+          <td class="py-2 px-1 text-center text-brand-black/60">${p.w + p.d + p.l}</td>
+          <td class="py-2 px-1 text-center font-bold">${p.w}</td>
+          <td class="py-2 px-1 text-center text-brand-black/60">${p.d}</td>
+          <td class="py-2 px-1 text-center text-brand-black/60">${p.l}</td>
+          <td class="py-2 pl-2 text-xs tracking-tight">${p.form.map(dot).join('')}</td>
+        </tr>`)
+      .join('');
+  }
+
+  function renderAll() { renderSquad(); renderTeams(); renderPending(); renderStats(); }
+
+  // ── Share card (canvas, client-side only) ────────────────────────────────
+  async function shareCard() {
+    const played = store.players.filter((p) => p.w + p.d + p.l > 0);
+    if (!played.length) return;
+    const hot = [...played].sort((a, b) => b.streak - a.streak)[0];
+    const headline = hot.streak >= 2
+      ? `${hot.name.toUpperCase()} HAS WON ${hot.streak} ON THE SPIN`
+      : 'THE RECORD SO FAR';
+
+    await Promise.all([
+      (document as any).fonts.load('80px "Bagel Fat One"'),
+      (document as any).fonts.load('700 40px "Inter Tight"'),
+    ]).catch(() => {});
+
+    const W = 1080, H = 1350;
+    const c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    const ctx = c.getContext('2d')!;
+    // Pitch background + stripes
+    ctx.fillStyle = '#2BD06B'; ctx.fillRect(0, 0, W, H);
+    ctx.save();
+    ctx.strokeStyle = 'rgba(0,0,0,0.07)'; ctx.lineWidth = 6;
+    for (let i = -H; i < W + H; i += 30) {
+      ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i + H, H); ctx.stroke();
+    }
+    ctx.restore();
+    // Headline
+    ctx.fillStyle = '#0E0F0C';
+    ctx.font = '86px "Bagel Fat One", Impact, sans-serif';
+    ctx.textAlign = 'center';
+    const words = headline.split(' ');
+    const lines: string[] = [];
+    let line = '';
+    for (const w2 of words) {
+      const t = line ? `${line} ${w2}` : w2;
+      if (ctx.measureText(t).width > W - 140) { lines.push(line); line = w2; } else line = t;
+    }
+    if (line) lines.push(line);
+    lines.forEach((l, i) => ctx.fillText(l, W / 2, 170 + i * 96));
+    if (hot.streak >= 2) {
+      ctx.font = '64px "Inter Tight", sans-serif';
+      ctx.fillText('🔥', W / 2, 170 + lines.length * 96 + 20);
+    }
+    // Table card
+    const top = 470, left = 90, width = W - 180;
+    const rows = [...played].sort((x, y) => y.w - x.w || y.d - x.d).slice(0, 6);
+    const cardH = 90 + rows.length * 92;
+    ctx.fillStyle = '#F4EFE0';
+    ctx.strokeStyle = '#0E0F0C'; ctx.lineWidth = 5;
+    (ctx as any).beginPath();
+    (ctx as any).roundRect(left, top, width, cardH, 28);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = 'rgba(14,15,12,0.5)';
+    ctx.font = '700 30px "Inter Tight", sans-serif';
+    ctx.textAlign = 'left'; ctx.fillText('PLAYER', left + 44, top + 62);
+    ctx.textAlign = 'right';
+    ctx.fillText('W', left + width - 250, top + 62);
+    ctx.fillText('D', left + width - 160, top + 62);
+    ctx.fillText('L', left + width - 70, top + 62);
+    rows.forEach((p, i) => {
+      const y = top + 130 + i * 92;
+      ctx.fillStyle = '#0E0F0C';
+      ctx.font = '800 40px "Inter Tight", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(`${i + 1}. ${p.name}${p.streak >= 3 ? ' 🔥' : ''}`.slice(0, 22), left + 44, y);
+      ctx.textAlign = 'right';
+      ctx.fillText(String(p.w), left + width - 250, y);
+      ctx.fillStyle = 'rgba(14,15,12,0.55)';
+      ctx.fillText(String(p.d), left + width - 160, y);
+      ctx.fillText(String(p.l), left + width - 70, y);
+    });
+    // Footer
+    ctx.fillStyle = '#0E0F0C';
+    ctx.textAlign = 'center';
+    ctx.font = '52px "Bagel Fat One", Impact, sans-serif';
+    ctx.fillText('megs.club/team-balancer', W / 2, H - 90);
+    ctx.font = '700 30px "Inter Tight", sans-serif';
+    ctx.fillStyle = 'rgba(14,15,12,0.6)';
+    ctx.fillText('Fair teams · payments · stats - free for organisers', W / 2, H - 40);
+
+    const blob: Blob = await new Promise((res) => c.toBlob((b) => res(b!), 'image/png'));
+    const file = new File([blob], 'megs-the-record.png', { type: 'image/png' });
+    const nav = navigator as any;
+    if (nav.share && nav.canShare?.({ files: [file] })) {
+      try { await nav.share({ files: [file], title: 'The record' }); return; } catch { /* fall through */ }
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'megs-the-record.png';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // ── Wiring ───────────────────────────────────────────────────────────────
+  $('parseBtn').addEventListener('click', () => {
+    const names = parseNames(($('pasteBox') as HTMLTextAreaElement).value);
+    if (!names.length) return;
+    addPlayers(names);
+    renderAll();
+  });
+
+  $('addBtn').addEventListener('click', () => {
+    const input = $('addName') as HTMLInputElement;
+    const names = parseNames(input.value);
+    if (names.length) { addPlayers(names); input.value = ''; renderAll(); }
+  });
+  $('addName').addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter') $('addBtn').click(); });
+
+  $('playerList').addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    const starId = t.getAttribute('data-id'), star = t.getAttribute('data-star');
+    const gkId = t.getAttribute('data-gk');
+    const rmId = t.getAttribute('data-remove');
+    if (starId && star) {
+      const p = store.players.find((x) => x.id === +starId)!;
+      const hadHistory = p.w + p.d + p.l > 0;
+      p.stars = +star;
+      // Reseed the hidden rating only while there's no result history to protect
+      if (!hadHistory) p.r = seedR(p.stars);
+      save(); renderSquad();
+    } else if (gkId) {
+      const p = store.players.find((x) => x.id === +gkId)!;
+      p.gk = !p.gk; save(); renderSquad();
+    } else if (rmId) {
+      store.players = store.players.filter((x) => x.id !== +rmId);
+      save(); renderAll();
+    }
+  });
+
+  $('clearSquad').addEventListener('click', () => {
+    if (!confirm('Clear the whole squad and all results?')) return;
+    store.players = []; store.pending = null; store.games = 0;
+    save(); lastTeams = null; renderAll();
+  });
+
+  $('makeTeams').addEventListener('click', () => {
+    if (store.players.length < 2) return;
+    lastTeams = makeTeams();
+    store.pending = { black: lastTeams.black.map((p) => p.id), white: lastTeams.white.map((p) => p.id) };
+    save(); renderAll();
+    $('teamsCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  $('shuffleBtn').addEventListener('click', () => {
+    lastTeams = makeTeams(120);
+    store.pending = { black: lastTeams.black.map((p) => p.id), white: lastTeams.white.map((p) => p.id) };
+    save(); renderTeams();
+  });
+
+  $('copyBtn').addEventListener('click', async () => {
+    if (!lastTeams) return;
+    const fmt = (t: Player[]) => t.map((p) => `${p.gk ? '🧤 ' : ''}${p.name}`).join('\n');
+    const text = `⚫ BLACKS\n${fmt(lastTeams.black)}\n\n⚪ WHITES\n${fmt(lastTeams.white)}\n\n⚖️ Balanced by Megs · megs.club/team-balancer`;
+    try {
+      await navigator.clipboard.writeText(text);
+      $('copyBtn').textContent = '✓ Copied';
+      setTimeout(() => ($('copyBtn').textContent = 'Copy for WhatsApp'), 1600);
+    } catch { /* clipboard blocked - no-op */ }
+  });
+
+  document.querySelectorAll('.resultBtn').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      recordResult(btn.getAttribute('data-result') as 'black' | 'draw' | 'white');
+      lastTeams = null; renderAll();
+      $('statsCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    })
+  );
+  $('dismissPending').addEventListener('click', () => { store.pending = null; save(); renderPending(); });
+
+  $('shareCardBtn').addEventListener('click', shareCard);
+
+  // If they generated teams and came back post-game, greet them with "who won?"
+  renderAll();
+</script>
