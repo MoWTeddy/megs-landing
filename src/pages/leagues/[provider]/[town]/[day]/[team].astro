@@ -1,7 +1,7 @@
 ---
 import Layout from '../../../../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
-import { getLeagues, townDay, providerSlug, slugifyName, titleCase, leaguePath, teamPath, claimUrl, type League, type Team } from '../../../../../lib/leagues';
+import { getLeagues, townDay, providerSlug, slugifyName, titleCase, leaguePath, teamPath, claimUrl, teamResults, type League, type Team } from '../../../../../lib/leagues';
 
 import kinkladze from '../../../../../assets/players/Georgi Kinkladze.jpg';
 import asprilla from '../../../../../assets/players/Asprilla.jpg';
@@ -29,6 +29,12 @@ const providerName = titleCase(league.provider);
 const gd = (n: number) => (n > 0 ? `+${n}` : `${n}`);
 const ordinal = (n: number) => { const s = ['th', 'st', 'nd', 'rd']; const v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
 const marker = (pos: number) => (pos <= 2 ? 'var(--color-brand-green)' : pos >= league.teams.length - 1 ? '#C0392B' : 'transparent');
+
+const results = teamResults(league, team.external_id);
+const form = results.map((r) => r.res);
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const fmtDate = (d: string) => { const [, m, day] = d.split('-'); return `${+day} ${MON[+m - 1]}`; };
+const isTeam = (id: string) => league.teams.some((t) => t.external_id === id);
 
 const scorers = [{ img: asprilla, n: 'Asprilla', v: 11 }, { img: akinfenwa, n: 'Akinfenwa', v: 8 }, { img: hooper, n: 'Gary Hooper', v: 6 }];
 const assists = [{ img: higuita, n: 'Higuita', v: 9 }, { img: tarabt, n: 'Tarabt', v: 7 }, { img: vandenBorre, n: 'Vanden Borre', v: 5 }];
@@ -109,6 +115,33 @@ const jsonLd = {
           </div>
         </div>
       </section>
+
+      {results.length > 0 && (
+        <section>
+          <p class="sec-label">Results this season</p>
+          <div class="card-brand rescard">
+            <div class="formrow">
+              <span class="form-lbl">Form</span>
+              <div class="form-pills">
+                {form.map((r) => <span class={`fp fp-${r}`}>{r}</span>)}
+              </div>
+            </div>
+            <div class="results">
+              {[...results].reverse().map((r) => (
+                <div class="resrow">
+                  <span class="rd">{fmtDate(r.date)}</span>
+                  <span class={`ha ha-${r.home ? 'h' : 'a'}`}>{r.home ? 'H' : 'A'}</span>
+                  {isTeam(r.opponentId)
+                    ? <a class="ro rolink" href={teamPath(league, r.opponent)}>{r.opponent}</a>
+                    : <span class="ro">{r.opponent}</span>}
+                  <span class="rsc disp">{r.gf}<span class="dash">-</span>{r.ga}</span>
+                  <span class={`rb rb-${r.res}`}>{r.res}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section>
         <p class="sec-label">{league.name} table</p>
@@ -244,6 +277,30 @@ const jsonLd = {
   .rc { text-align: center; }
   .rc .n { font-size: 24px; line-height: 1; } .gdp { color: var(--color-brand-deep); } .gdn { color: #C0392B; }
   .rc .k { font-family: var(--font-scoreboard); font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(14,15,12,0.6); margin-top: 4px; }
+
+  .rescard { padding: 6px 16px 10px; }
+  .formrow { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(14,15,12,0.12); }
+  .form-lbl { font-family: var(--font-scoreboard); font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(14,15,12,0.6); }
+  .form-pills { display: flex; gap: 6px; }
+  .fp { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-scoreboard); font-weight: 800; font-size: 11px; color: #fff; border: 1.5px solid var(--color-brand-black); }
+  .fp-W { background: var(--color-brand-deep); }
+  .fp-D { background: #B7A94E; color: var(--color-brand-black); }
+  .fp-L { background: #C0392B; }
+  .results { display: flex; flex-direction: column; }
+  .resrow { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(14,15,12,0.1); }
+  .resrow:last-child { border-bottom: none; }
+  .rd { font-family: var(--font-scoreboard); font-size: 11px; color: rgba(14,15,12,0.55); width: 46px; flex: none; letter-spacing: 0.02em; }
+  .ha { width: 18px; height: 18px; border-radius: 5px; display: grid; place-items: center; font-family: var(--font-scoreboard); font-size: 9.5px; font-weight: 800; flex: none; border: 1.5px solid var(--color-brand-black); }
+  .ha-h { background: var(--color-brand-cream); color: var(--color-brand-black); }
+  .ha-a { background: transparent; color: rgba(14,15,12,0.6); border-color: rgba(14,15,12,0.3); }
+  .ro { flex: 1; font-weight: 700; font-size: 14.5px; letter-spacing: -0.01em; color: var(--color-brand-black); text-decoration: none; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  a.rolink:hover { text-decoration: underline; }
+  .rsc { font-size: 17px; flex: none; font-variant-numeric: tabular-nums; }
+  .rsc .dash { margin: 0 3px; color: rgba(14,15,12,0.4); }
+  .rb { width: 20px; height: 20px; border-radius: 5px; display: grid; place-items: center; font-family: var(--font-scoreboard); font-weight: 800; font-size: 10.5px; color: #fff; flex: none; }
+  .rb-W { background: var(--color-brand-deep); }
+  .rb-D { background: #B7A94E; color: var(--color-brand-black); }
+  .rb-L { background: #C0392B; }
 
   .tcard { overflow: hidden; padding: 4px 6px; }
   .tscroll { overflow-x: auto; }

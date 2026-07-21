@@ -13,6 +13,13 @@ export interface Team {
   p: number; w: number; d: number; l: number; f: number; a: number; gd: number; pts: number;
   claimed: boolean;
 }
+export interface Fixture {
+  home: string; // external_id
+  away: string; // external_id
+  hs: number;
+  as: number;
+  date: string; // YYYY-MM-DD
+}
 export interface League {
   provider: string;
   slug: string;
@@ -20,6 +27,61 @@ export interface League {
   venue: string;
   division: string;
   teams: Team[];
+  fixtures: Fixture[];
+}
+
+export interface Result {
+  date: string;
+  opponent: string;
+  opponentId: string;
+  gf: number;
+  ga: number;
+  home: boolean;
+  res: 'W' | 'D' | 'L';
+}
+
+// Every played fixture for one team, oldest first, resolved to opponent + outcome.
+export function teamResults(l: League, externalId: string): Result[] {
+  const nameOf = (id: string) => l.teams.find((t) => t.external_id === id)?.name ?? 'Opponent';
+  return (l.fixtures ?? [])
+    .filter((f) => f.home === externalId || f.away === externalId)
+    .map((f) => {
+      const home = f.home === externalId;
+      const gf = home ? f.hs : f.as;
+      const ga = home ? f.as : f.hs;
+      const opponentId = home ? f.away : f.home;
+      const res: Result['res'] = gf > ga ? 'W' : gf < ga ? 'L' : 'D';
+      return { date: f.date, opponent: nameOf(opponentId), opponentId, gf, ga, home, res };
+    })
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+// Head-to-head record between two teams from their shared played fixtures.
+export interface H2H {
+  opponent: string;
+  opponentId: string;
+  played: number;
+  w: number; d: number; l: number;
+  gf: number; ga: number;
+  last: Result | null;
+}
+export function headToHead(l: League, teamId: string, oppId: string): H2H {
+  const meetings = teamResults(l, teamId).filter((r) => r.opponentId === oppId);
+  const agg = meetings.reduce(
+    (acc, r) => {
+      acc.played++;
+      acc.gf += r.gf; acc.ga += r.ga;
+      acc[r.res === 'W' ? 'w' : r.res === 'D' ? 'd' : 'l']++;
+      return acc;
+    },
+    { w: 0, d: 0, l: 0, gf: 0, ga: 0, played: 0 },
+  );
+  return {
+    opponent: l.teams.find((t) => t.external_id === oppId)?.name ?? 'Opponent',
+    opponentId: oppId,
+    ...agg,
+    last: meetings.length ? meetings[meetings.length - 1] : null,
+  };
 }
 
 // 'scunthorpe-thursday' -> { town: 'scunthorpe', day: 'thursday' }
