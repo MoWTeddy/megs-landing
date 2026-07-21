@@ -1,8 +1,18 @@
 {
   "redirects": [
     {
+      "source": "/leagues/scunthorpe-thursday",
+      "destination": "/leagues/leisure-leagues/scunthorpe/thursday",
+      "permanent": true
+    },
+    {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.megs.club" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.megs.club"
+        }
+      ],
       "destination": "https://megs.club/:path*",
       "permanent": true
     }
@@ -11,13 +21,19 @@
     {
       "source": "/:all*(svg|jpg|jpeg|png|webp|ico|woff|woff2|ttf)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
       "source": "/_astro/:all*",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     }
   ]
