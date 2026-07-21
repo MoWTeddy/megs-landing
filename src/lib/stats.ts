@@ -36,12 +36,15 @@ export interface SeasonProfile {
   winPct: number;
   form: Res[];                       // last 6, oldest -> newest
   current: { type: Res; n: number } | null;
-  longestWin: number; longestUnbeaten: number; longestWinless: number;
+  longestWin: number; longestUnbeaten: number; longestWinless: number; longestLoss: number;
   home: Split; away: Split;
   cleanSheets: number; cleanSheetPct: number;
   failedToScore: number;
   scoredEvery: boolean;
+  scoringStreak: number;
   btts: number; bttsPct: number;
+  tightW: number; tightL: number; tightPlayed: number;
+  avgWinMargin: number;
   biggestWin: Result | null;
   biggestDefeat: Result | null;
   highestScoring: Result | null;
@@ -68,6 +71,14 @@ export function seasonProfile(league: League, externalId: string): SeasonProfile
   const form = results.map((r) => r.res);
   const pts = w * 3 + d;
 
+  const tight = results.filter((r) => Math.abs(r.gf - r.ga) === 1);
+  const winMargins = wins.map((r) => r.gf - r.ga);
+  const scoringStreak = (() => {
+    let max = 0, cur = 0;
+    for (const r of results) { if (r.gf > 0) { cur++; if (cur > max) max = cur; } else cur = 0; }
+    return max;
+  })();
+
   return {
     hasGames: p > 0,
     p, w, d, l, pts, ppg: p ? r1(pts / p) : 0,
@@ -79,11 +90,17 @@ export function seasonProfile(league: League, externalId: string): SeasonProfile
     longestWin: longestRun(form, (x) => x === 'W'),
     longestUnbeaten: longestRun(form, (x) => x !== 'L'),
     longestWinless: longestRun(form, (x) => x !== 'W'),
+    longestLoss: longestRun(form, (x) => x === 'L'),
     home, away,
     cleanSheets, cleanSheetPct: p ? Math.round((cleanSheets / p) * 100) : 0,
     failedToScore,
     scoredEvery: p > 0 && failedToScore === 0,
+    scoringStreak,
     btts, bttsPct: p ? Math.round((btts / p) * 100) : 0,
+    tightW: tight.filter((r) => r.res === 'W').length,
+    tightL: tight.filter((r) => r.res === 'L').length,
+    tightPlayed: tight.length,
+    avgWinMargin: winMargins.length ? r1(winMargins.reduce((a, b) => a + b, 0) / winMargins.length) : 0,
     biggestWin: byMargin(wins, (r) => r.gf - r.ga),
     biggestDefeat: byMargin(losses, (r) => r.ga - r.gf),
     highestScoring: byMargin(results, (r) => r.gf + r.ga),

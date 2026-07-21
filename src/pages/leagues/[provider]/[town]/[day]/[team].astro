@@ -198,6 +198,18 @@ const jsonLd = {
               {stats.highestScoring && stats.highestScoring.gf + stats.highestScoring.ga >= 4 && (
                 <div class="hl"><span class="hlk">Highest scoring</span><span class="hlv disp">{stats.highestScoring.gf}-{stats.highestScoring.ga}</span><span class="hlo">vs {stats.highestScoring.opponent}</span></div>
               )}
+              {stats.longestWin >= 2 && (
+                <div class="hl"><span class="hlk">Longest win run</span><span class="hlv disp">{stats.longestWin} games</span></div>
+              )}
+              {stats.tightPlayed >= 1 && (
+                <div class="hl"><span class="hlk">Tight games (1 goal)</span><span class="hlv disp">{stats.tightW}-{stats.tightL}</span><span class="hlo">won-lost</span></div>
+              )}
+              {stats.scoringStreak >= 2 && (
+                <div class="hl"><span class="hlk">Scored in a row</span><span class="hlv disp">{stats.scoringStreak} games</span></div>
+              )}
+              {stats.w > 0 && stats.avgWinMargin > 0 && (
+                <div class="hl"><span class="hlk">Avg winning margin</span><span class="hlv disp">{stats.avgWinMargin}</span><span class="hlo">goals</span></div>
+              )}
             </div>
           </div>
         </section>
