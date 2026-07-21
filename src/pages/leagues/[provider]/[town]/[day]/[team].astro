@@ -1,0 +1,279 @@
+---
+import Layout from '../../../../../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import { getLeagues, townDay, providerSlug, slugifyName, titleCase, leaguePath, teamPath, type League, type Team } from '../../../../../lib/leagues';
+
+import kinkladze from '../../../../../assets/players/Georgi Kinkladze.jpg';
+import asprilla from '../../../../../assets/players/Asprilla.jpg';
+import akinfenwa from '../../../../../assets/players/Akinfenwa.jpg';
+import hooper from '../../../../../assets/players/Gary Hooper.jpg';
+import higuita from '../../../../../assets/players/Rene Higuita.jpg';
+import tarabt from '../../../../../assets/players/Adel Tarabt.jpg';
+import vandenBorre from '../../../../../assets/players/Anthony Vanden Borre.jpg';
+
+export async function getStaticPaths() {
+  const leagues = await getLeagues();
+  const paths: any[] = [];
+  for (const league of leagues) {
+    const { town, day } = townDay(league.slug);
+    for (const team of league.teams) {
+      paths.push({ params: { provider: providerSlug(league.provider), town, day, team: slugifyName(team.name) }, props: { league, team } });
+    }
+  }
+  return paths;
+}
+
+const { league, team } = Astro.props as { league: League; team: Team };
+const { town } = townDay(league.slug);
+const providerName = titleCase(league.provider);
+const gd = (n: number) => (n > 0 ? `+${n}` : `${n}`);
+const ordinal = (n: number) => { const s = ['th', 'st', 'nd', 'rd']; const v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+const marker = (pos: number) => (pos <= 2 ? 'var(--color-brand-green)' : pos >= league.teams.length - 1 ? '#C0392B' : 'transparent');
+
+const scorers = [{ img: asprilla, n: 'Asprilla', v: 11 }, { img: akinfenwa, n: 'Akinfenwa', v: 8 }, { img: hooper, n: 'Gary Hooper', v: 6 }];
+const assists = [{ img: higuita, n: 'Higuita', v: 9 }, { img: tarabt, n: 'Tarabt', v: 7 }, { img: vandenBorre, n: 'Vanden Borre', v: 5 }];
+
+const APP = 'https://app.megs.club';
+const APP_STORE = 'https://apps.apple.com/app/megs/id6783225149';
+const PLAY = 'https://play.google.com/store/apps/details?id=club.megs.app';
+
+const title = `${team.name} - ${league.name} Table, Results & Stats | Megs`;
+const description = `${team.name}: ${ordinal(team.position)} in the ${league.name} at ${league.venue} - played ${team.p}, ${team.pts} points. See the table, results and player stats, or claim your free page on Megs.`;
+const canonical = `https://megs.club${teamPath(league, team.name)}`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'SportsTeam', name: team.name, sport: 'Football', url: canonical,
+      memberOf: { '@type': 'SportsOrganization', name: league.name },
+      location: { '@type': 'Place', name: league.venue } },
+    { '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Leagues', item: 'https://megs.club/leagues' },
+      { '@type': 'ListItem', position: 2, name: league.name, item: `https://megs.club${leaguePath(league)}` },
+      { '@type': 'ListItem', position: 3, name: team.name, item: canonical },
+    ] },
+  ],
+};
+---
+
+<Layout title={title} description={description}>
+  <main class="bg-pitch page">
+    <div class="wrap">
+
+      <nav class="crumb">
+        <a href="https://megs.club">Megs</a> <span>›</span>
+        <a href={leaguePath(league)}>{league.name}</a> <span>›</span>
+        <b>{team.name}</b>
+      </nav>
+
+      <header class="hdr">
+        <p class="eyebrow">{league.name} · {titleCase(town)}</p>
+        <h1 class="disp h1">{team.name}</h1>
+        <div class="chips">
+          <span class="chip">{ordinal(team.position)} in the table</span>
+          <span class="chip">{team.pts} pts</span>
+          {team.claimed
+            ? <span class="chip on"><span class="pulse"></span> On Megs</span>
+            : <span class="chip live"><span class="pulse"></span> Updated weekly</span>}
+        </div>
+      </header>
+
+      {team.claimed
+        ? (
+          <div class="claim-banner on-banner">
+            <div><div class="cb-t disp">This team's on Megs ✓</div><div class="cb-s">Running their table, results and player stats through the app.</div></div>
+            <a class="btn btn-green" href={APP}>Open in Megs</a>
+          </div>
+        )
+        : (
+          <div class="claim-banner">
+            <div><div class="cb-t disp">Is this your team?</div><div class="cb-s">Claim {team.name} free - table, results and player stats, all yours.</div></div>
+            <a class="btn btn-orange" href={APP}>Claim your team</a>
+          </div>
+        )}
+
+      <section>
+        <p class="sec-label">Record this season</p>
+        <div class="card-brand rec">
+          <div class="rg">
+            <div class="rc"><div class="n disp">{team.p}</div><div class="k">Played</div></div>
+            <div class="rc"><div class="n disp" style="color:var(--color-brand-deep)">{team.w}</div><div class="k">Won</div></div>
+            <div class="rc"><div class="n disp">{team.d}</div><div class="k">Drawn</div></div>
+            <div class="rc"><div class="n disp" style="color:#C0392B">{team.l}</div><div class="k">Lost</div></div>
+            <div class="rc"><div class="n disp">{team.f}</div><div class="k">For</div></div>
+            <div class="rc"><div class="n disp">{team.a}</div><div class="k">Against</div></div>
+            <div class="rc"><div class={`n disp ${team.gd > 0 ? 'gdp' : team.gd < 0 ? 'gdn' : ''}`}>{gd(team.gd)}</div><div class="k">Goal diff</div></div>
+            <div class="rc"><div class="n disp">{team.pts}</div><div class="k">Points</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <p class="sec-label">{league.name} table</p>
+        <div class="card-brand tcard">
+          <div class="tscroll">
+            <table>
+              <thead><tr>
+                <th class="c-pos">#</th><th class="c-team">Team</th><th class="c-num">P</th>
+                <th class="c-num d-sm">W</th><th class="c-num d-sm">D</th><th class="c-num d-sm">L</th>
+                <th class="c-num">GD</th><th class="c-num pr">Pts</th>
+              </tr></thead>
+              <tbody>
+                {league.teams.map((r) => (
+                  <tr class={r.name === team.name ? 'me' : ''}>
+                    <td class="c-pos pos">{r.position}</td>
+                    <td class="c-team team">
+                      <span class="mk" style={`background:${marker(r.position)}`}></span>
+                      {r.name === team.name
+                        ? <span class="tn">{r.name}</span>
+                        : <a class="tn tlink" href={teamPath(league, r.name)}>{r.name}</a>}
+                      {r.claimed && r.name !== team.name && <span class="mini-on">On Megs</span>}
+                    </td>
+                    <td class="c-num">{r.p}</td>
+                    <td class="c-num d-sm">{r.w}</td><td class="c-num d-sm">{r.d}</td><td class="c-num d-sm">{r.l}</td>
+                    <td class={`c-num ${r.gd > 0 ? 'gdp' : r.gd < 0 ? 'gdn' : ''}`}>{gd(r.gd)}</td>
+                    <td class="c-num pr pts disp">{r.pts}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p class="note"><a href={leaguePath(league)}>Full {league.name} table & fixtures ›</a></p>
+      </section>
+
+      <section>
+        <p class="sec-label">The bit the table's missing</p>
+        <div class="card-brand pad">
+          <h2 class="disp h2">Give {team.name} their own stats</h2>
+          <p class="lede">The league site gives you eight numbers. Claim {team.name} on Megs and every player gets goals, assists, Man of the Match, appearances - the stuff that actually starts arguments.</p>
+          <div class="potm">
+            <Image src={kinkladze} alt="Kinkladze" width={56} height={56} class="av" />
+            <div class="who"><div class="tag">Player of the Season</div><div class="nm disp">Kinkladze</div></div>
+            <div class="pb"><div class="pn disp">248</div><div class="pk">points</div></div>
+          </div>
+          <div class="lg">
+            <div class="lead"><h4>⚽ Top scorers</h4>{scorers.map((s, i) => (<div class="lr"><span class="r">{i + 1}</span><Image src={s.img} alt={s.n} width={28} height={28} class="pi" /><span class="p">{s.n}</span><span class="v disp">{s.v}</span></div>))}</div>
+            <div class="lead"><h4>🅰 Most assists</h4>{assists.map((s, i) => (<div class="lr"><span class="r">{i + 1}</span><Image src={s.img} alt={s.n} width={28} height={28} class="pi" /><span class="p">{s.n}</span><span class="v disp">{s.v}</span></div>))}</div>
+          </div>
+          <div class="chipset">
+            <span>🧤 Man of the Match</span><span>🔗 Chemistry</span><span>👯 Deadly duos</span>
+            <span>📅 Appearances</span><span>📈 Form</span><span>🏆 Player of the Season</span><span>📲 Shareable cards</span>
+          </div>
+        </div>
+      </section>
+
+      {!team.claimed && (
+        <div class="card-brand explain">
+          <h2 class="disp h2b">Claim {team.name}, free</h2>
+          <p>Your table, results and history come straight into Megs - pick teams, take payments and settle who's actually carrying the side, all from your phone.</p>
+          <a class="btn btn-orange big" href={APP}>Claim your team →</a>
+          <div class="stores">
+            <a href={APP_STORE} aria-label="Download on the App Store"><img src="/appstore-badge.svg" alt="Download on the App Store" height="44" /></a>
+            <a href={PLAY} aria-label="Get it on Google Play"><img src="/googleplay-badge.svg" alt="Get it on Google Play" height="44" /></a>
+          </div>
+        </div>
+      )}
+
+      <footer class="foot">
+        A Megs page for {team.name}. Results are public {providerName} data; player stats shown are an example of what Megs tracks.<br>
+        Not affiliated with {providerName}. <a href="https://megs.club">megs.club</a>
+      </footer>
+    </div>
+  </main>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+</Layout>
+
+<style>
+  .page { min-height: 100vh; }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 0 16px 72px; }
+  .disp { font-family: var(--font-display); font-weight: 400; }
+
+  .crumb { padding: 18px 0 0; font-size: 12.5px; font-weight: 600; color: rgba(14,15,12,0.6); }
+  .crumb a { color: var(--color-brand-deep); text-decoration: none; }
+  .crumb span { margin: 0 5px; opacity: 0.5; }
+  .crumb b { color: var(--color-brand-black); }
+
+  .hdr { padding: 16px 0 4px; }
+  .eyebrow { font-family: var(--font-scoreboard); font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-brand-deep); margin: 0 0 8px; }
+  .h1 { font-size: clamp(30px, 8vw, 48px); line-height: 0.98; color: #fff; margin: 0 0 14px; text-shadow: 0 2px 0 rgba(14,15,12,0.18); }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
+  .chip { font-family: var(--font-scoreboard); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; background: var(--color-brand-black); color: var(--color-brand-cream); padding: 5px 10px; border-radius: 20px; }
+  .chip.live, .chip.on { background: var(--color-brand-cream); color: var(--color-brand-deep); display: inline-flex; align-items: center; gap: 6px; }
+  .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--color-brand-deep); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(14,92,46,.5)} 70%{box-shadow:0 0 0 6px rgba(14,92,46,0)} 100%{box-shadow:0 0 0 0 rgba(14,92,46,0)} }
+  @media (prefers-reduced-motion: reduce) { .pulse { animation: none; } }
+
+  section { margin-top: 24px; }
+  .sec-label { font-family: var(--font-scoreboard); font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--color-brand-black); opacity: 0.55; margin: 0 0 10px; padding-left: 2px; }
+  .pad { padding: 20px; }
+  .note { font-size: 13px; margin: 10px 2px 0; }
+  .note a { color: var(--color-brand-deep); font-weight: 600; text-decoration: none; }
+
+  .btn { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-display); font-size: 15px; border: 2px solid var(--color-brand-black); border-radius: 12px; padding: 10px 18px; text-decoration: none; white-space: nowrap; }
+  .btn-orange { background: var(--color-brand-orange); color: #fff; box-shadow: var(--shadow-brand-sm); }
+  .btn-green { background: var(--color-brand-green); color: var(--color-brand-black); box-shadow: var(--shadow-brand-sm); }
+  .big { font-size: 17px; padding: 13px 26px; }
+
+  .claim-banner { margin-top: 20px; background: var(--color-brand-black); border: 2px solid var(--color-brand-black); border-radius: 16px; padding: 16px 18px; box-shadow: var(--shadow-brand-cream); display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .claim-banner.on-banner { background: var(--color-brand-deep); }
+  .cb-t { font-size: 17px; color: var(--color-brand-cream); }
+  .cb-s { color: rgba(244,239,224,0.68); font-size: 13px; margin-top: 2px; }
+
+  .rec { padding: 16px; }
+  .rg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  @media (min-width: 520px) { .rg { grid-template-columns: repeat(8, 1fr); } }
+  .rc { text-align: center; }
+  .rc .n { font-size: 24px; line-height: 1; } .gdp { color: var(--color-brand-deep); } .gdn { color: #C0392B; }
+  .rc .k { font-family: var(--font-scoreboard); font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(14,15,12,0.6); margin-top: 4px; }
+
+  .tcard { overflow: hidden; padding: 4px 6px; }
+  .tscroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+  th { font-family: var(--font-scoreboard); font-weight: 700; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; color: rgba(14,15,12,0.6); padding: 12px 8px; border-bottom: 2px solid var(--color-brand-black); }
+  td { padding: 12px 8px; border-bottom: 1px solid rgba(14,15,12,0.12); font-variant-numeric: tabular-nums; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr.me { background: rgba(43,208,107,0.16); }
+  .c-pos { width: 30px; text-align: left; }
+  th.c-team, td.c-team { text-align: left; width: 100%; }
+  .c-num { text-align: right; white-space: nowrap; }
+  .pr { padding-right: 14px; }
+  .pos { font-weight: 800; color: rgba(14,15,12,0.6); }
+  .tn { font-weight: 700; letter-spacing: -0.01em; color: var(--color-brand-black); text-decoration: none; }
+  a.tlink:hover { text-decoration: underline; }
+  .mk { display: inline-block; width: 3px; height: 15px; border-radius: 2px; vertical-align: middle; margin-right: 9px; }
+  .pts { font-size: 16px; }
+  .mini-on { display: inline-block; margin-left: 8px; font-family: var(--font-scoreboard); font-size: 9px; font-weight: 800; text-transform: uppercase; color: #fff; background: var(--color-brand-deep); padding: 1px 6px; border-radius: 20px; vertical-align: middle; }
+  @media (max-width: 520px) { .d-sm { display: none; } }
+
+  .h2 { font-size: clamp(21px, 5vw, 26px); margin: 0 0 4px; }
+  .lede { color: rgba(14,15,12,0.62); font-size: 14.5px; margin: 0 0 18px; }
+  .potm { display: flex; align-items: center; gap: 14px; background: var(--color-brand-green); border: 2px solid var(--color-brand-black); border-radius: 14px; padding: 12px 16px; margin-bottom: 16px; }
+  .av { width: 56px; height: 56px; border-radius: 12px; border: 2px solid var(--color-brand-black); object-fit: cover; flex: none; }
+  .who { flex: 1; min-width: 0; }
+  .tag { font-family: var(--font-scoreboard); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-brand-deep); }
+  .nm { font-size: 20px; line-height: 1.1; }
+  .pb { text-align: center; flex: none; }
+  .pn { font-size: 26px; line-height: 1; }
+  .pk { font-family: var(--font-scoreboard); font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(14,15,12,0.6); }
+  .lg { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 480px) { .lg { grid-template-columns: 1fr; } }
+  .lead { background: #EDE6D2; border: 2px solid var(--color-brand-black); border-radius: 12px; padding: 12px 14px; }
+  .lead h4 { font-family: var(--font-scoreboard); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 8px; }
+  .lr { display: flex; align-items: center; gap: 9px; padding: 5px 0; font-size: 14px; }
+  .lr .r { width: 12px; color: rgba(14,15,12,0.45); font-weight: 800; font-size: 12px; }
+  .pi { width: 28px; height: 28px; border-radius: 8px; border: 1.5px solid var(--color-brand-black); object-fit: cover; flex: none; }
+  .lr .p { flex: 1; font-weight: 600; }
+  .lr .v { font-size: 15px; }
+  .chipset { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 18px; }
+  .chipset span { font-size: 12.5px; font-weight: 600; background: #EDE6D2; border: 1.5px solid var(--color-brand-black); border-radius: 20px; padding: 5px 11px; }
+
+  .explain { margin-top: 28px; padding: 28px 22px; text-align: center; }
+  .h2b { font-size: clamp(24px, 6vw, 32px); margin: 0 0 10px; }
+  .explain p { color: rgba(14,15,12,0.62); max-width: 44ch; margin: 0 auto 20px; font-size: 15px; }
+  .stores { display: flex; gap: 12px; justify-content: center; margin-top: 6px; flex-wrap: wrap; }
+  .stores img { display: block; height: 44px; width: auto; }
+
+  .foot { margin-top: 32px; text-align: center; color: rgba(14,15,12,0.55); font-size: 11.5px; line-height: 1.8; }
+  .foot a { color: var(--color-brand-black); }
+</style>
