@@ -92,6 +92,8 @@ const jsonLd = {
           </div>
         )}
 
+      <p class="intro">{team.name} are {ordinal(team.position)} in the {league.name} at {league.venue} - {team.pts} {team.pts === 1 ? 'point' : 'points'} from {team.p} {team.p === 1 ? 'game' : 'games'}, {gd(team.gd)} goal difference. See their full record, the {league.name} table and the player stats they'd unlock on Megs below.</p>
+
       <section>
         <p class="sec-label">Record this season</p>
         <div class="card-brand rec">
@@ -162,6 +164,25 @@ const jsonLd = {
           </div>
         </div>
       </section>
+
+      {!team.claimed && (
+        <section>
+          <p class="sec-label">{team.name}'s own stats</p>
+          <div class="card-brand locked">
+            <div class="blur" aria-hidden="true">
+              <div class="lrow"><span class="lic">🥇</span><span class="lk">Top scorer</span><span class="ldot"></span><span class="lbar"></span><span class="lnum disp">██</span></div>
+              <div class="lrow"><span class="lic">🅰</span><span class="lk">Most assists</span><span class="ldot"></span><span class="lbar"></span><span class="lnum disp">██</span></div>
+              <div class="lrow"><span class="lic">🧤</span><span class="lk">Most MOTMs</span><span class="ldot"></span><span class="lbar"></span><span class="lnum disp">█</span></div>
+              <div class="lrow"><span class="lic">🏆</span><span class="lk">Player of the Season</span><span class="ldot"></span><span class="lbar"></span><span class="lnum disp">███</span></div>
+            </div>
+            <div class="unlock">
+              <div class="ut disp">🔒 Locked</div>
+              <div class="us">Claim {team.name} and these fill in with your <b>actual squad</b> - who's really carrying the side, settled once and for all.</div>
+              <a class="btn btn-orange" href={APP}>Claim to unlock</a>
+            </div>
+          </div>
+        </section>
+      )}
 
       {!team.claimed && (
         <div class="card-brand explain">
@@ -267,6 +288,21 @@ const jsonLd = {
   .lr .v { font-size: 15px; }
   .chipset { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 18px; }
   .chipset span { font-size: 12.5px; font-weight: 600; background: #EDE6D2; border: 1.5px solid var(--color-brand-black); border-radius: 20px; padding: 5px 11px; }
+
+  .intro { color: rgba(14,15,12,0.72); font-size: 15px; margin: 6px 2px 0; max-width: 60ch; line-height: 1.55; }
+  .locked { position: relative; padding: 20px; overflow: hidden; }
+  .blur { filter: blur(5px); opacity: 0.6; user-select: none; }
+  .lrow { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(14,15,12,0.1); }
+  .lrow:last-child { border-bottom: none; }
+  .lic { font-size: 18px; width: 22px; }
+  .lk { font-weight: 700; font-size: 14px; width: 150px; }
+  .ldot { width: 26px; height: 26px; border-radius: 50%; background: rgba(14,15,12,0.28); flex: none; }
+  .lbar { flex: 1; height: 12px; border-radius: 6px; background: rgba(14,15,12,0.22); }
+  .lnum { font-size: 16px; letter-spacing: 2px; color: rgba(14,15,12,0.45); }
+  .unlock { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 11px; text-align: center; padding: 18px; background: linear-gradient(rgba(244,239,224,0.35), rgba(244,239,224,0.86)); }
+  .unlock .ut { font-size: 21px; }
+  .unlock .us { font-size: 13.5px; color: rgba(14,15,12,0.72); max-width: 34ch; }
+  .unlock .us b { color: var(--color-brand-black); }
 
   .explain { margin-top: 28px; padding: 28px 22px; text-align: center; }
   .h2b { font-size: clamp(24px, 6vw, 32px); margin: 0 0 10px; }
