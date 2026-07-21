@@ -1,7 +1,7 @@
 ---
 import Layout from '../../../../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
-import { getLeagues, townDay, providerSlug, slugifyName, titleCase, leaguePath, teamPath, type League, type Team } from '../../../../../lib/leagues';
+import { getLeagues, townDay, providerSlug, slugifyName, titleCase, leaguePath, teamPath, claimUrl, type League, type Team } from '../../../../../lib/leagues';
 
 import kinkladze from '../../../../../assets/players/Georgi Kinkladze.jpg';
 import asprilla from '../../../../../assets/players/Asprilla.jpg';
@@ -88,7 +88,7 @@ const jsonLd = {
         : (
           <div class="claim-banner">
             <div><div class="cb-t disp">Is this your team?</div><div class="cb-s">Claim {team.name} free - table, results and player stats, all yours.</div></div>
-            <a class="btn btn-orange" href={APP}>Claim your team</a>
+            <a class="btn btn-orange" href={claimUrl(league, team.name, team.external_id)}>Claim your team</a>
           </div>
         )}
 
@@ -144,6 +144,22 @@ const jsonLd = {
         <p class="note"><a href={leaguePath(league)}>Full {league.name} table & fixtures ›</a></p>
       </section>
 
+      {!team.claimed && (
+        <section>
+          <p class="sec-label">Locked · claim to reveal</p>
+          <div class="card-brand locked">
+            <div class="lrow"><span class="lic">🏆</span><span class="lk">Best player at {team.name}</span><span class="lv disp">██████</span></div>
+            <div class="lrow"><span class="lic">⚽</span><span class="lk">Most goals for {team.name}</span><span class="lv disp">████ · ██</span></div>
+            <div class="lrow"><span class="lic">🔗</span><span class="lk">Deadliest goal combo</span><span class="lv disp">████ → ███</span></div>
+            <div class="lrow"><span class="lic">🧤</span><span class="lk">Most Man of the Match</span><span class="lv disp">█████</span></div>
+            <div class="unlock-cta">
+              <a class="btn btn-orange" href={claimUrl(league, team.name, team.external_id)}>🔒 Claim to reveal</a>
+              <span>Claim {team.name} and Megs works it all out from your games - who's <b>really</b> carrying the side, settled.</span>
+            </div>
+          </div>
+        </section>
+      )}
+
       <section>
         <p class="sec-label">The bit the table's missing</p>
         <div class="card-brand pad">
@@ -166,29 +182,10 @@ const jsonLd = {
       </section>
 
       {!team.claimed && (
-        <section>
-          <p class="sec-label">{team.name}'s own stats</p>
-          <div class="card-brand locked">
-            <div class="blur" aria-hidden="true">
-              <div class="lrow"><span class="lic">🥇</span><span class="lk">Top scorer</span><span class="ldot"></span><span class="lbar"></span><span class="lnum disp">██</span></div>
-              <div class="lrow"><span class="lic">🅰</span><span class="lk">Most assists</span><span class="ldot"></span><span class="lbar"></span><span class="lnum disp">██</span></div>
-              <div class="lrow"><span class="lic">🧤</span><span class="lk">Most MOTMs</span><span class="ldot"></span><span class="lbar"></span><span class="lnum disp">█</span></div>
-              <div class="lrow"><span class="lic">🏆</span><span class="lk">Player of the Season</span><span class="ldot"></span><span class="lbar"></span><span class="lnum disp">███</span></div>
-            </div>
-            <div class="unlock">
-              <div class="ut disp">🔒 Locked</div>
-              <div class="us">Claim {team.name} and these fill in with your <b>actual squad</b> - who's really carrying the side, settled once and for all.</div>
-              <a class="btn btn-orange" href={APP}>Claim to unlock</a>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {!team.claimed && (
         <div class="card-brand explain">
           <h2 class="disp h2b">Claim {team.name}, free</h2>
           <p>Your table, results and history come straight into Megs - pick teams, take payments and settle who's actually carrying the side, all from your phone.</p>
-          <a class="btn btn-orange big" href={APP}>Claim your team →</a>
+          <a class="btn btn-orange big" href={claimUrl(league, team.name, team.external_id)}>Claim your team →</a>
           <div class="stores">
             <a href={APP_STORE} aria-label="Download on the App Store"><img src="/appstore-badge.svg" alt="Download on the App Store" height="44" /></a>
             <a href={PLAY} aria-label="Get it on Google Play"><img src="/googleplay-badge.svg" alt="Get it on Google Play" height="44" /></a>
@@ -290,19 +287,15 @@ const jsonLd = {
   .chipset span { font-size: 12.5px; font-weight: 600; background: #EDE6D2; border: 1.5px solid var(--color-brand-black); border-radius: 20px; padding: 5px 11px; }
 
   .intro { color: rgba(14,15,12,0.72); font-size: 15px; margin: 6px 2px 0; max-width: 60ch; line-height: 1.55; }
-  .locked { position: relative; padding: 20px; overflow: hidden; }
-  .blur { filter: blur(5px); opacity: 0.6; user-select: none; }
-  .lrow { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(14,15,12,0.1); }
+  .locked { padding: 18px 20px; }
+  .lrow { display: flex; align-items: center; gap: 11px; padding: 11px 0; border-bottom: 1px solid rgba(14,15,12,0.1); }
   .lrow:last-child { border-bottom: none; }
-  .lic { font-size: 18px; width: 22px; }
-  .lk { font-weight: 700; font-size: 14px; width: 150px; }
-  .ldot { width: 26px; height: 26px; border-radius: 50%; background: rgba(14,15,12,0.28); flex: none; }
-  .lbar { flex: 1; height: 12px; border-radius: 6px; background: rgba(14,15,12,0.22); }
-  .lnum { font-size: 16px; letter-spacing: 2px; color: rgba(14,15,12,0.45); }
-  .unlock { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 11px; text-align: center; padding: 18px; background: linear-gradient(rgba(244,239,224,0.35), rgba(244,239,224,0.86)); }
-  .unlock .ut { font-size: 21px; }
-  .unlock .us { font-size: 13.5px; color: rgba(14,15,12,0.72); max-width: 34ch; }
-  .unlock .us b { color: var(--color-brand-black); }
+  .lic { font-size: 18px; width: 22px; flex: none; }
+  .lk { flex: 1; font-weight: 700; font-size: 14.5px; letter-spacing: -0.01em; }
+  .lv { font-size: 15px; letter-spacing: 2px; color: rgba(14,15,12,0.5); filter: blur(4px); user-select: none; white-space: nowrap; }
+  .unlock-cta { display: flex; flex-direction: column; align-items: center; gap: 9px; text-align: center; margin-top: 16px; padding-top: 16px; border-top: 2px dashed rgba(14,15,12,0.18); }
+  .unlock-cta span { font-size: 13px; color: rgba(14,15,12,0.68); max-width: 38ch; }
+  .unlock-cta b { color: var(--color-brand-black); }
 
   .explain { margin-top: 28px; padding: 28px 22px; text-align: center; }
   .h2b { font-size: clamp(24px, 6vw, 32px); margin: 0 0 10px; }

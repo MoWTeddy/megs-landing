@@ -1,7 +1,7 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
-import { getLeagues, townDay, providerSlug, titleCase, teamPath, type League } from '../../../../lib/leagues';
+import { getLeagues, townDay, providerSlug, titleCase, teamPath, claimUrl, type League } from '../../../../lib/leagues';
 
 // Illustrative stat leaders - cult "streets won't forget" legends, using the
 // site's own player artwork. This is the "what you'd get on Megs" teaser, not
@@ -85,7 +85,7 @@ const description = `The ${league.name} at ${league.venue}: live table, results 
                       <a class="tn tlink" href={teamPath(league, r.name)}>{r.name}</a>
                       {r.claimed
                         ? <span class="on-megs">✓ On Megs</span>
-                        : <a class="cl" href={APP}>Claim ›</a>}
+                        : <a class="cl" href={claimUrl(league, r.name, r.external_id)}>Claim ›</a>}
                     </td>
                     <td class="c-num">{r.p}</td>
                     <td class="c-num d-sm">{r.w}</td><td class="c-num d-sm">{r.d}</td><td class="c-num d-sm">{r.l}</td>
