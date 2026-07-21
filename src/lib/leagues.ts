@@ -45,6 +45,7 @@ export function teamPath(l: League, teamName: string): string {
 // Deep link into the app's claim flow, carrying the discovered team.
 export function claimUrl(l: League, teamName?: string, externalId?: string): string {
   const p = new URLSearchParams({ provider: l.provider, league: l.name });
+  if (l.venue) p.set('venue', l.venue);
   if (teamName) p.set('name', teamName);
   if (externalId) p.set('team', externalId);
   return `https://app.megs.club/claim?${p.toString()}`;
