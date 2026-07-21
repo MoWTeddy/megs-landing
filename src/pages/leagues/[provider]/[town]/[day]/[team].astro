@@ -2,6 +2,7 @@
 import Layout from '../../../../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
 import { getLeagues, townDay, providerSlug, slugifyName, titleCase, leaguePath, teamPath, claimUrl, teamResults, type League, type Team } from '../../../../../lib/leagues';
+import { seasonProfile, leagueRanks, headToHeadAll, ordinal as ord } from '../../../../../lib/stats';
 
 import kinkladze from '../../../../../assets/players/Georgi Kinkladze.jpg';
 import asprilla from '../../../../../assets/players/Asprilla.jpg';
@@ -35,6 +36,12 @@ const form = results.map((r) => r.res);
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const fmtDate = (d: string) => { const [, m, day] = d.split('-'); return `${+day} ${MON[+m - 1]}`; };
 const isTeam = (id: string) => league.teams.some((t) => t.external_id === id);
+
+const stats = seasonProfile(league, team.external_id);
+const ranks = leagueRanks(league, team);
+const h2h = headToHeadAll(league, team.external_id);
+const streakWord = (t: 'W' | 'D' | 'L', n: number) =>
+  t === 'W' ? `${n === 1 ? 'win' : 'wins'}` : t === 'D' ? `${n === 1 ? 'draw' : 'draws'}` : `${n === 1 ? 'loss' : 'losses'}`;
 
 const scorers = [{ img: asprilla, n: 'Asprilla', v: 11 }, { img: akinfenwa, n: 'Akinfenwa', v: 8 }, { img: hooper, n: 'Gary Hooper', v: 6 }];
 const assists = [{ img: higuita, n: 'Higuita', v: 9 }, { img: tarabt, n: 'Tarabt', v: 7 }, { img: vandenBorre, n: 'Vanden Borre', v: 5 }];
@@ -139,6 +146,93 @@ const jsonLd = {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+      )}
+
+      {stats.hasGames && (
+        <section>
+          <p class="sec-label">Season in numbers</p>
+          <div class="card-brand statwrap">
+            <div class="statgrid">
+              <div class="stat"><div class="sv disp">{stats.winPct}<span class="pct">%</span></div><div class="sk">Win rate</div></div>
+              <div class="stat"><div class="sv disp">{stats.ppg}</div><div class="sk">Points / game</div></div>
+              <div class="stat"><div class="sv disp">{stats.scoredAvg}</div><div class="sk">Scored / game</div></div>
+              <div class="stat"><div class="sv disp">{stats.concededAvg}</div><div class="sk">Conceded / game</div></div>
+              <div class="stat"><div class="sv disp">{stats.cleanSheets}</div><div class="sk">Clean sheet{stats.cleanSheets === 1 ? '' : 's'}</div></div>
+              <div class="stat"><div class="sv disp">{stats.bttsPct}<span class="pct">%</span></div><div class="sk">Both teams scored</div></div>
+            </div>
+
+            <div class="ctx">
+              <span class={`ctxb ${ranks.bestAttack ? 'gold' : ''}`}><b>{ord(ranks.attackRank)}</b> best attack <em>of {ranks.teams}</em></span>
+              <span class={`ctxb ${ranks.bestDefence ? 'gold' : ''}`}><b>{ord(ranks.defenceRank)}</b> best defence <em>of {ranks.teams}</em></span>
+              {stats.scoredEvery && stats.p > 1 && <span class="ctxb">Scored in every game</span>}
+            </div>
+
+            <div class="ha-split">
+              <div class="hacol">
+                <div class="hah">Home</div>
+                <div class="harec disp">{stats.home.w}<span>·</span>{stats.home.d}<span>·</span>{stats.home.l}</div>
+                <div class="hag">{stats.home.gf}-{stats.home.ga} goals · {stats.home.p} game{stats.home.p === 1 ? '' : 's'}</div>
+              </div>
+              <div class="hacol">
+                <div class="hah">Away</div>
+                <div class="harec disp">{stats.away.w}<span>·</span>{stats.away.d}<span>·</span>{stats.away.l}</div>
+                <div class="hag">{stats.away.gf}-{stats.away.ga} goals · {stats.away.p} game{stats.away.p === 1 ? '' : 's'}</div>
+              </div>
+            </div>
+
+            <div class="hilite">
+              {stats.current && (
+                <div class="hl"><span class="hlk">Current run</span><span class="hlv disp">{stats.current.n} {streakWord(stats.current.type, stats.current.n)}</span></div>
+              )}
+              {stats.longestUnbeaten > 1 && (
+                <div class="hl"><span class="hlk">Longest unbeaten</span><span class="hlv disp">{stats.longestUnbeaten} games</span></div>
+              )}
+              {stats.biggestWin && (
+                <div class="hl"><span class="hlk">Biggest win</span><span class="hlv disp">{stats.biggestWin.gf}-{stats.biggestWin.ga}</span><span class="hlo">vs {stats.biggestWin.opponent}</span></div>
+              )}
+              {stats.biggestDefeat && (
+                <div class="hl"><span class="hlk">Heaviest defeat</span><span class="hlv disp">{stats.biggestDefeat.gf}-{stats.biggestDefeat.ga}</span><span class="hlo">vs {stats.biggestDefeat.opponent}</span></div>
+              )}
+              {stats.highestScoring && stats.highestScoring.gf + stats.highestScoring.ga >= 4 && (
+                <div class="hl"><span class="hlk">Highest scoring</span><span class="hlv disp">{stats.highestScoring.gf}-{stats.highestScoring.ga}</span><span class="hlo">vs {stats.highestScoring.opponent}</span></div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {h2h.length > 0 && (
+        <section>
+          <p class="sec-label">Head-to-head</p>
+          <div class="card-brand h2hcard">
+            <div class="h2hscroll">
+              <table class="h2h">
+                <thead><tr>
+                  <th class="c-team">Opponent</th>
+                  <th class="c-num">P</th><th class="c-num">W</th><th class="c-num">D</th><th class="c-num">L</th>
+                  <th class="c-num">Goals</th><th class="c-last">Last meeting</th>
+                </tr></thead>
+                <tbody>
+                  {h2h.map((o) => (
+                    <tr>
+                      <td class="c-team">
+                        {isTeam(o.opponentId)
+                          ? <a class="tn tlink" href={teamPath(league, o.opponent)}>{o.opponent}</a>
+                          : <span class="tn">{o.opponent}</span>}
+                        <span class={`edge edge-${o.edge}`}>{o.edge === 'ahead' ? 'Ahead' : o.edge === 'behind' ? 'Behind' : 'Level'}</span>
+                      </td>
+                      <td class="c-num">{o.p}</td>
+                      <td class="c-num wc">{o.w}</td><td class="c-num">{o.d}</td><td class="c-num lc">{o.l}</td>
+                      <td class="c-num gls">{o.gf}-{o.ga}</td>
+                      <td class="c-last">{o.last ? `${o.last.gf}-${o.last.ga}` : '-'}<span class="lastd">{o.last ? fmtDate(o.last.date) : ''}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p class="h2hnote">Every meeting we've tracked - record and goals each way. Claim {team.name} and it grows with every game you play.</p>
           </div>
         </section>
       )}
@@ -301,6 +395,51 @@ const jsonLd = {
   .rb-W { background: var(--color-brand-deep); }
   .rb-D { background: #B7A94E; color: var(--color-brand-black); }
   .rb-L { background: #C0392B; }
+
+  .statwrap { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+  .statgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (min-width: 520px) { .statgrid { grid-template-columns: repeat(6, 1fr); } }
+  .stat { background: #EDE6D2; border: 2px solid var(--color-brand-black); border-radius: 12px; padding: 12px 6px; text-align: center; }
+  .stat .sv { font-size: 23px; line-height: 1; }
+  .stat .sv .pct { font-size: 13px; margin-left: 1px; opacity: 0.7; }
+  .stat .sk { font-family: var(--font-scoreboard); font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.04em; color: rgba(14,15,12,0.6); margin-top: 5px; line-height: 1.2; }
+
+  .ctx { display: flex; flex-wrap: wrap; gap: 8px; }
+  .ctxb { font-size: 12.5px; font-weight: 600; background: var(--color-brand-black); color: var(--color-brand-cream); border-radius: 20px; padding: 6px 12px; }
+  .ctxb b { font-family: var(--font-display); font-weight: 400; }
+  .ctxb em { font-style: normal; opacity: 0.6; }
+  .ctxb.gold { background: var(--color-brand-green); color: var(--color-brand-black); }
+
+  .ha-split { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .hacol { background: #EDE6D2; border: 2px solid var(--color-brand-black); border-radius: 12px; padding: 12px 14px; text-align: center; }
+  .hah { font-family: var(--font-scoreboard); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(14,15,12,0.6); }
+  .harec { font-size: 22px; margin: 5px 0 3px; }
+  .harec span { color: rgba(14,15,12,0.35); margin: 0 4px; }
+  .hag { font-size: 11.5px; color: rgba(14,15,12,0.6); }
+
+  .hilite { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  @media (min-width: 560px) { .hilite { grid-template-columns: repeat(3, 1fr); } }
+  .hl { background: #EDE6D2; border: 1.5px solid var(--color-brand-black); border-radius: 11px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
+  .hlk { font-family: var(--font-scoreboard); font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(14,15,12,0.55); }
+  .hlv { font-size: 18px; line-height: 1; }
+  .hlo { font-size: 11.5px; color: rgba(14,15,12,0.6); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .h2hcard { padding: 4px 6px 12px; }
+  .h2hscroll { overflow-x: auto; }
+  table.h2h { border-collapse: collapse; width: 100%; font-size: 14px; }
+  table.h2h th { font-family: var(--font-scoreboard); font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.03em; color: rgba(14,15,12,0.6); padding: 12px 7px; border-bottom: 2px solid var(--color-brand-black); }
+  table.h2h td { padding: 11px 7px; border-bottom: 1px solid rgba(14,15,12,0.1); font-variant-numeric: tabular-nums; }
+  table.h2h tbody tr:last-child td { border-bottom: none; }
+  table.h2h .wc { color: var(--color-brand-deep); font-weight: 700; }
+  table.h2h .lc { color: #C0392B; font-weight: 700; }
+  table.h2h .gls { font-weight: 600; }
+  .edge { display: inline-block; margin-left: 8px; font-family: var(--font-scoreboard); font-size: 8.5px; font-weight: 800; text-transform: uppercase; padding: 1px 6px; border-radius: 20px; vertical-align: middle; }
+  .edge-ahead { background: var(--color-brand-deep); color: #fff; }
+  .edge-behind { background: #C0392B; color: #fff; }
+  .edge-level { background: rgba(14,15,12,0.12); color: rgba(14,15,12,0.7); }
+  .c-last { text-align: right; white-space: nowrap; }
+  .c-last .lastd { display: block; font-size: 10px; color: rgba(14,15,12,0.5); font-variant-numeric: normal; }
+  .h2hnote { font-size: 12px; color: rgba(14,15,12,0.6); margin: 10px 10px 2px; line-height: 1.5; }
 
   .tcard { overflow: hidden; padding: 4px 6px; }
   .tscroll { overflow-x: auto; }
