@@ -29,6 +29,18 @@ export function townDay(slug: string): { town: string; day: string } {
 }
 export const providerSlug = (p: string) => p.replace(/_/g, '-');
 export const titleCase = (s: string) => s.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+export const slugifyName = (s: string) =>
+  s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+// Canonical paths - shared by the league page and every team page so internal
+// links (league <-> teams <-> opponents) stay consistent.
+export function leaguePath(l: League): string {
+  const { town, day } = townDay(l.slug);
+  return `/leagues/${providerSlug(l.provider)}/${town}/${day}`;
+}
+export function teamPath(l: League, teamName: string): string {
+  return `${leaguePath(l)}/${slugifyName(teamName)}`;
+}
 
 export async function getLeagues(): Promise<League[]> {
   try {

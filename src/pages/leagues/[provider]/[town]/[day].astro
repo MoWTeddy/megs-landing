@@ -1,7 +1,7 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
-import { getLeagues, townDay, providerSlug, titleCase, type League } from '../../../../lib/leagues';
+import { getLeagues, townDay, providerSlug, titleCase, teamPath, type League } from '../../../../lib/leagues';
 
 // Illustrative stat leaders - cult "streets won't forget" legends, using the
 // site's own player artwork. This is the "what you'd get on Megs" teaser, not
@@ -82,7 +82,7 @@ const description = `The ${league.name} at ${league.venue}: live table, results 
                     <td class="c-pos pos">{r.position}</td>
                     <td class="c-team team">
                       <span class="mk" style={`background:${marker(r.position)}`}></span>
-                      <span class="tn">{r.name}</span>
+                      <a class="tn tlink" href={teamPath(league, r.name)}>{r.name}</a>
                       {r.claimed
                         ? <span class="on-megs">✓ On Megs</span>
                         : <a class="cl" href={APP}>Claim ›</a>}
@@ -217,7 +217,8 @@ const description = `The ${league.name} at ${league.venue}: live table, results 
   .c-num { text-align: right; white-space: nowrap; }
   .pr { padding-right: 14px; }
   .pos { font-weight: 800; color: rgba(14,15,12,0.6); }
-  .tn { font-weight: 700; letter-spacing: -0.01em; }
+  .tn { font-weight: 700; letter-spacing: -0.01em; color: var(--color-brand-black); text-decoration: none; }
+  a.tlink:hover { text-decoration: underline; }
   .mk { display: inline-block; width: 3px; height: 15px; border-radius: 2px; vertical-align: middle; margin-right: 9px; }
   .pts { font-size: 16px; }
   .gdp { color: var(--color-brand-deep); font-weight: 700; } .gdn { color: #C0392B; font-weight: 700; }
