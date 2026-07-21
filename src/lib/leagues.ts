@@ -42,6 +42,14 @@ export function teamPath(l: League, teamName: string): string {
   return `${leaguePath(l)}/${slugifyName(teamName)}`;
 }
 
+// Deep link into the app's claim flow, carrying the discovered team.
+export function claimUrl(l: League, teamName?: string, externalId?: string): string {
+  const p = new URLSearchParams({ provider: l.provider, league: l.name });
+  if (teamName) p.set('name', teamName);
+  if (externalId) p.set('team', externalId);
+  return `https://app.megs.club/claim?${p.toString()}`;
+}
+
 export async function getLeagues(): Promise<League[]> {
   try {
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
