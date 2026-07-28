@@ -1,0 +1,201 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const title = 'Megs for Walking Football - Fair teams, sorted subs, one app';
+const description =
+  'The app built for walking football clubs. Balance teams fairly by ability and age, sort subs and payments, and run both your weekly sessions and your league fixtures in one place.';
+
+const problems = [
+  'Sorting teams by hand every week - and still hearing about it.',
+  'Spond tells you who’s coming, but it won’t balance the sides.',
+  'Chasing subs pitch-side, cash in one pocket, cards in the other.',
+  'Mixing an 80-year-old and a 40-year-old on the same side.',
+];
+
+const features = [
+  {
+    title: 'Fair teams - by ability and age',
+    body: 'Megs balances the sides for you, weighing up ability and age so no one’s left marking someone twice their pace. Even games, every week, no debates.',
+    tag: 'The one that matters most',
+  },
+  {
+    title: 'Who’s playing',
+    body: 'Availability at a glance - who’s in, who’s out, who’s on the bench. No more roll-call in the group chat.',
+    tag: 'Sessions',
+  },
+  {
+    title: 'Subs, sorted',
+    body: 'Players pay to play by card, Apple Pay or Google Pay - or cash, if that’s your club. Add a charity amount to every sub if you collect one. Paid before they play.',
+    tag: 'Payments',
+  },
+  {
+    title: 'Sessions and leagues',
+    body: 'Run your weekly community games and your county-league fixtures from the same place. Works alongside your league, doesn’t replace it.',
+    tag: 'Both sides of the game',
+  },
+];
+
+const plays = [
+  { h: 'Community sessions', b: 'Mixed ages, mixed abilities, everyone plays. Megs makes the teams fair so the football stays friendly.' },
+  { h: 'League fixtures', b: 'Playing in a county walking-football league? Track your squad, fixtures and results alongside your weekly games.' },
+  { h: 'Training and socials', b: 'Not every session is a match. Post it, see who’s coming, take the subs - same as any other game.' },
+];
+---
+
+<Layout title={title} description={description}>
+  <main class="bg-brand-green text-brand-black">
+    <!-- ============ NAV + HERO ============ -->
+    <div class="bg-pitch-glow">
+      <header class="px-6 pt-6 pb-4 max-w-6xl mx-auto flex items-center justify-between gap-6">
+        <a href="/" class="flex items-center gap-2 shrink-0">
+          <img src="/megs-logo.svg" alt="Megs" class="h-8 w-auto" />
+        </a>
+        <nav class="hidden md:flex items-center gap-7 text-sm font-semibold">
+          <a href="#how" class="hover:opacity-70 transition-opacity">How it works</a>
+          <a href="#plays" class="hover:opacity-70 transition-opacity">How your club plays</a>
+          <a href="https://app.megs.club" class="hover:opacity-70 transition-opacity opacity-70">Log in</a>
+        </nav>
+        <a href="https://app.megs.club/create"
+           class="inline-flex items-center justify-center rounded-full bg-brand-black text-brand-cream font-semibold text-sm px-5 py-2.5 hover:opacity-90 transition-opacity">
+          Get started - it’s free
+        </a>
+      </header>
+
+      <section class="px-6 pt-10 pb-16 max-w-6xl mx-auto grid lg:grid-cols-[1.15fr_1fr] gap-12 items-center">
+        <div>
+          <div class="inline-flex items-center gap-2 rounded-full bg-brand-black text-brand-cream font-scoreboard text-[11px] font-bold tracking-widest uppercase px-4 py-2 mb-8">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-orange"></span>
+            Built for walking football
+          </div>
+
+          <h1 class="font-display text-4xl md:text-6xl lg:text-[4.75rem] leading-[0.98] mb-6">
+            Fair teams.<br />Sorted subs.<br /><span class="text-brand-orange">One app</span> for your club.
+          </h1>
+
+          <p class="font-body text-lg md:text-xl max-w-xl mb-8 opacity-90">
+            The app built for walking football clubs. Megs balances the teams by ability <em>and</em> age, sorts the subs, and keeps your sessions and league fixtures in one place - so you can get on with the football.
+          </p>
+
+          <div class="flex flex-wrap gap-3">
+            <a href="https://app.megs.club/create"
+               class="inline-flex items-center justify-center rounded-xl bg-brand-black text-brand-cream font-semibold px-6 py-3.5 text-base shadow-brand-cream hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
+              Get your club on Megs →
+            </a>
+            <a href="#how"
+               class="inline-flex items-center justify-center rounded-xl bg-brand-green border-2 border-brand-black text-brand-black font-semibold px-6 py-3.5 text-base hover:bg-brand-black hover:text-brand-cream transition-colors">
+              See how it works
+            </a>
+          </div>
+        </div>
+
+        <!-- Hero card: the age+ability balance, as a fixture snapshot -->
+        <div class="card-brand p-6">
+          <p class="font-scoreboard text-[11px] font-bold tracking-widest uppercase text-brand-deep mb-4">Teams · balanced for you</p>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="rounded-lg bg-brand-green/15 border border-brand-black/10 p-3">
+              <p class="font-scoreboard text-[10px] uppercase tracking-wider text-brand-black/60 mb-2">Team A</p>
+              <ul class="space-y-1.5 text-sm font-semibold">
+                <li class="flex justify-between"><span>Pat</span><span class="text-brand-black/50 tabular-nums">72</span></li>
+                <li class="flex justify-between"><span>Sandra</span><span class="text-brand-black/50 tabular-nums">61</span></li>
+                <li class="flex justify-between"><span>Ron</span><span class="text-brand-black/50 tabular-nums">83</span></li>
+              </ul>
+            </div>
+            <div class="rounded-lg bg-brand-orange/10 border border-brand-black/10 p-3">
+              <p class="font-scoreboard text-[10px] uppercase tracking-wider text-brand-black/60 mb-2">Team B</p>
+              <ul class="space-y-1.5 text-sm font-semibold">
+                <li class="flex justify-between"><span>Dave</span><span class="text-brand-black/50 tabular-nums">68</span></li>
+                <li class="flex justify-between"><span>Marie</span><span class="text-brand-black/50 tabular-nums">65</span></li>
+                <li class="flex justify-between"><span>Jim</span><span class="text-brand-black/50 tabular-nums">79</span></li>
+              </ul>
+            </div>
+          </div>
+          <p class="text-[13px] text-brand-black/70 mt-4 leading-snug">
+            Ability and age spread evenly across both sides - so an over-80 isn’t left chasing a 40-year-old.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============ THE PROBLEM ============ -->
+    <section class="bg-brand-cream text-brand-black px-6 py-16 md:py-20">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="font-display text-3xl md:text-4xl mb-8 leading-tight">Sound familiar?</h2>
+        <ul class="grid sm:grid-cols-2 gap-4">
+          {problems.map((p) => (
+            <li class="flex gap-3 items-start">
+              <span class="mt-1 text-brand-orange font-black shrink-0">—</span>
+              <span class="font-body text-lg">{p}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="font-body text-lg mt-8 opacity-80">
+          Megs does the admin so the organiser can stop being the referee off the pitch too.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ HOW IT WORKS / FEATURES ============ -->
+    <section id="how" class="bg-pitch text-brand-black px-6 py-16 md:py-20">
+      <div class="max-w-6xl mx-auto">
+        <h2 class="font-display text-3xl md:text-4xl mb-3 leading-tight">What Megs does for your club</h2>
+        <p class="font-body text-lg opacity-85 max-w-2xl mb-10">Everything a walking football organiser does by hand - handled in a couple of taps.</p>
+        <div class="grid md:grid-cols-2 gap-5">
+          {features.map((f) => (
+            <div class="card-brand p-6">
+              <p class="font-scoreboard text-[10px] font-bold tracking-widest uppercase text-brand-deep mb-3">{f.tag}</p>
+              <h3 class="font-display text-2xl mb-2">{f.title}</h3>
+              <p class="font-body text-brand-black/80 leading-relaxed">{f.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HOW YOUR CLUB PLAYS ============ -->
+    <section id="plays" class="bg-brand-deep text-brand-cream px-6 py-16 md:py-20">
+      <div class="max-w-5xl mx-auto">
+        <h2 class="font-display text-3xl md:text-4xl mb-3 leading-tight text-brand-cream">However your club plays</h2>
+        <p class="font-body text-lg opacity-85 max-w-2xl mb-10">Community, competitive, or a bit of both - Megs fits around your week, not the other way round.</p>
+        <div class="grid md:grid-cols-3 gap-5">
+          {plays.map((p) => (
+            <div class="rounded-2xl border-2 border-brand-cream/25 p-6">
+              <h3 class="font-display text-xl mb-2 text-brand-green">{p.h}</h3>
+              <p class="font-body text-brand-cream/85 leading-relaxed text-[15px]">{p.b}</p>
+            </div>
+          ))}
+        </div>
+        <p class="font-body text-brand-cream/70 mt-8 text-[15px] max-w-2xl">
+          Playing in an official county league? Megs runs your club’s day-to-day - sessions, teams and subs - and sits happily alongside your league’s own admin.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ CTA ============ -->
+    <section class="bg-pitch-glow text-brand-black px-6 py-20">
+      <div class="max-w-3xl mx-auto text-center">
+        <h2 class="font-display text-4xl md:text-5xl mb-5 leading-[0.98]">Get your club on Megs.</h2>
+        <p class="font-body text-lg md:text-xl opacity-90 mb-8 max-w-xl mx-auto">
+          Free to set up, free for your players to join. Have your first fair-teams session sorted in minutes.
+        </p>
+        <div class="flex flex-wrap gap-3 justify-center">
+          <a href="https://app.megs.club/create"
+             class="inline-flex items-center justify-center rounded-xl bg-brand-black text-brand-cream font-semibold px-7 py-4 text-base shadow-brand-cream hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
+            Get started - it’s free →
+          </a>
+          <a href="https://wa.me/message/Y25KBMDFGQ6JK1"
+             class="inline-flex items-center justify-center rounded-xl bg-brand-green border-2 border-brand-black text-brand-black font-semibold px-7 py-4 text-base hover:bg-brand-black hover:text-brand-cream transition-colors">
+            Chat to us first
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="bg-brand-black text-brand-cream px-6 py-10">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+        <img src="/megs-logo.svg" alt="Megs" class="h-7 w-auto opacity-90" />
+        <p class="opacity-60">The app for your weekly game. Walking football, casual or league.</p>
+        <a href="/" class="opacity-80 hover:opacity-100 font-semibold">megs.club →</a>
+      </div>
+    </footer>
+  </main>
+</Layout>
