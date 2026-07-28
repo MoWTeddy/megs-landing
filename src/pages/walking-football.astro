@@ -3,9 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import { Image } from 'astro:assets';
 import eddiePhoto from '../assets/eddie.png';
 
-const title = 'Walking Football by Megs - keep the football going, lose the admin';
+const title = 'The Walking Football App - powered by Megs';
 const description =
-  'The simple app for organising walking football. Confirm who’s playing, create fair teams by ability, mobility and age, sort session payments, and keep your whole club connected - community sessions and competitive fixtures alike.';
+  'The walking football app. Confirm who’s playing, create fair teams by ability, mobility and age, sort session payments, and keep your whole club connected - community sessions and competitive fixtures alike. Powered by Megs.';
 
 // Conversion routes: one for clubs ready to try it, one for the pilot.
 const SETUP_URL = 'https://app.megs.club/create';
@@ -81,17 +81,16 @@ const faqs = [
 
       <section class="px-6 pt-10 pb-10 max-w-6xl mx-auto grid lg:grid-cols-[1.1fr_1fr] gap-12 items-center">
         <div>
-          <div class="inline-flex items-center gap-2 rounded-full bg-brand-black text-brand-cream font-scoreboard text-[11px] font-bold tracking-widest uppercase px-4 py-2 mb-8">
-            <span class="w-1.5 h-1.5 rounded-full bg-brand-orange"></span>
-            Walking Football by Megs
+          <h1 class="font-display text-6xl md:text-7xl lg:text-[5.25rem] leading-[0.9] mb-5">
+            The Walking<br />Football App.
+          </h1>
+          <div class="flex items-center gap-2.5 mb-8">
+            <span class="font-scoreboard text-xs font-bold uppercase tracking-[0.22em] text-brand-black/60">Powered by</span>
+            <img src="/megs-logo.svg" alt="Megs" class="h-6 w-auto" />
           </div>
 
-          <h1 class="font-display text-5xl md:text-7xl lg:text-[4.75rem] leading-[0.98] mb-6">
-            Keep the<br />football going.<br /><span class="text-brand-orange">Lose the admin.</span>
-          </h1>
-
           <p class="font-body text-xl md:text-2xl max-w-xl mb-9 opacity-90 leading-snug">
-            The simple app for organising walking-football sessions - confirming who’s playing, creating fair teams, and keeping your whole club connected.
+            <span class="font-extrabold">Keep the football going. Lose the weekly admin.</span> The simple way to organise sessions, confirm who’s playing and create fair teams - for your whole club.
           </p>
 
           <div class="flex flex-wrap gap-3">
@@ -459,8 +458,14 @@ const faqs = [
     <footer class="text-brand-cream" style="background:var(--navy)">
       <div class="px-6 py-12 max-w-6xl mx-auto">
         <div class="flex flex-wrap items-center justify-between gap-6 mb-8">
-          <a href="/" class="flex items-center gap-3"><img src="/megs-logo-white.svg" alt="Megs" class="h-8 w-auto" /></a>
-          <p class="font-display text-xl">Built for the people who keep the game going.</p>
+          <div>
+            <p class="font-display text-2xl leading-none">The Walking Football App</p>
+            <div class="flex items-center gap-2 mt-2">
+              <span class="font-scoreboard text-[10px] font-bold uppercase tracking-[0.22em] text-brand-cream/60">Powered by</span>
+              <img src="/megs-logo-white.svg" alt="Megs" class="h-5 w-auto opacity-90" />
+            </div>
+          </div>
+          <p class="font-body text-brand-cream/70 text-sm max-w-xs sm:text-right">Built for the people who keep the game going.</p>
         </div>
         <div class="flex flex-wrap items-center justify-between gap-4 text-sm font-body opacity-70 border-t border-brand-cream/15 pt-6">
           <span>© {new Date().getFullYear()} Megs · Walking Football by Megs</span>
