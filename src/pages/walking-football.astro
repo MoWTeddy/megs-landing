@@ -1,58 +1,94 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import eddiePhoto from '../assets/eddie.png';
 
 const title = 'Megs for Walking Football - Fair teams, sorted subs, one app';
 const description =
   'The app built for walking football clubs. Balance teams fairly by ability and age, sort subs and payments, and run both your weekly sessions and your league fixtures in one place.';
 
-const problems = [
-  'Sorting teams by hand every week - and still hearing about it.',
-  'Spond tells you who’s coming, but it won’t balance the sides.',
-  'Chasing subs pitch-side, cash in one pocket, cards in the other.',
-  'Mixing an 80-year-old and a 40-year-old on the same side.',
+const navLinks = [
+  { href: '#how-it-works', label: 'How it works' },
+  { href: '#balancing', label: 'Fair teams' },
+  { href: '#plays', label: 'Your club' },
+];
+
+const steps = [
+  { n: '01', title: 'Set up your session', body: 'Create your weekly game in seconds - venue, time, how many. Set it to repeat and it runs itself.', imageSrc: '/step-1-set-it-up.webp' },
+  { n: '02', title: 'Share the link', body: 'Players confirm they’re in and pay their subs in a tap - card, Apple Pay, Google Pay, or cash if that’s your club.', imageSrc: '/step-2-share-it.webp' },
+  { n: '03', title: 'Fair teams, sorted', body: 'Megs balances the sides for you - by ability and age - so games stay even and everyone gets a proper run-out.', imageSrc: '/step-3-teams.webp' },
+  { n: '04', title: 'Play', body: 'That’s it. Turn up, play, and let Megs keep the record of who played and who paid.' },
 ];
 
 const features = [
   {
-    title: 'Fair teams - by ability and age',
-    body: 'Megs balances the sides for you, weighing up ability and age so no one’s left marking someone twice their pace. Even games, every week, no debates.',
-    tag: 'The one that matters most',
+    title: 'Fair teams',
+    body: 'Balanced by ability and age, every week. No more sorting sides by hand - and no more one team running away with it.',
+    imageSrc: '/feature-teams.webp',
   },
   {
     title: 'Who’s playing',
-    body: 'Availability at a glance - who’s in, who’s out, who’s on the bench. No more roll-call in the group chat.',
-    tag: 'Sessions',
+    body: 'Who’s in, who’s out, who’s on the bench - at a glance. No more roll-call in the group chat.',
+    imageSrc: '/feature-availability.webp',
   },
   {
     title: 'Subs, sorted',
-    body: 'Players pay to play by card, Apple Pay or Google Pay - or cash, if that’s your club. Add a charity amount to every sub if you collect one. Paid before they play.',
-    tag: 'Payments',
+    body: 'Players pay before they play - card, Apple Pay, Google Pay or cash. Collect a bit for charity on every sub if your club does. No more chasing coins pitch-side.',
+    imageSrc: '/feature-payments.webp',
   },
   {
-    title: 'Sessions and leagues',
-    body: 'Run your weekly community games and your county-league fixtures from the same place. Works alongside your league, doesn’t replace it.',
-    tag: 'Both sides of the game',
+    title: 'A record of it all',
+    body: 'Appearances, results and who’s been turning up - kept for you. Handy for the club, and for anyone who likes a bit of friendly bragging rights.',
+    imageSrc: '/feature-stats.webp',
   },
 ];
 
 const plays = [
   { h: 'Community sessions', b: 'Mixed ages, mixed abilities, everyone plays. Megs makes the teams fair so the football stays friendly.' },
-  { h: 'League fixtures', b: 'Playing in a county walking-football league? Track your squad, fixtures and results alongside your weekly games.' },
-  { h: 'Training and socials', b: 'Not every session is a match. Post it, see who’s coming, take the subs - same as any other game.' },
+  { h: 'League fixtures', b: 'In a county walking-football league? Track your squad, fixtures and results alongside your weekly games.' },
+  { h: 'Training & socials', b: 'Not every session is a match. Post it, see who’s coming, take the subs - same as any other game.' },
+];
+
+const faqs = [
+  {
+    q: 'How does balancing by age work?',
+    a: "You set each player's ability, and Megs also factors in age when it splits the sides - so you don't end up with an 80-year-old marking a 40-year-old. It spreads pace and ability across both teams so games stay even and everyone gets a proper game. You stay in control: the balance is a starting point you can tweak before kick-off.",
+  },
+  {
+    q: 'Is Megs really free?',
+    a: "Yes - free to set up and free for players to join. If you choose to collect subs through Megs, players pay a small per-match fee on top of their share (around 20p platform fee plus roughly 30p card processing) - that's how Megs keeps the lights on. You can still take cash if you'd rather handle subs yourself.",
+  },
+  {
+    q: 'Can we collect a bit for charity with our subs?',
+    a: "Yes. Plenty of walking football clubs add a small amount for charity to every sub - you can build that into what players pay, so it's collected automatically rather than rattling a tin pitch-side.",
+  },
+  {
+    q: 'Does this replace our county league?',
+    a: "No - it sits alongside it. Megs runs your club's day-to-day: sessions, availability, fair teams and subs. If you also play in an official league, you can track your squad, fixtures and results here too, but your league keeps its own official admin. Megs is for the bit in between the fixtures.",
+  },
+  {
+    q: 'What formats does it handle?',
+    a: "5, 6 and 7-a-side - the common walking football formats - and everything in between. You set the format when you create your group, and the balancing adjusts to the number of players. Group sizes are flexible, and popular sessions run a waitlist automatically once you're full.",
+  },
+  {
+    q: 'Do players need to download anything?',
+    a: "No app required to start - players sign up the first time they join your group (about 30 seconds), then every session is a one-tap confirm and pay. There's a mobile app too if they'd prefer it.",
+  },
 ];
 ---
 
 <Layout title={title} description={description}>
   <main class="bg-brand-green text-brand-black">
-    <!-- ============ NAV + HERO ============ -->
+    <!-- ============== NAV + HERO ============== -->
     <div class="bg-pitch-glow">
       <header class="px-6 pt-6 pb-4 max-w-6xl mx-auto flex items-center justify-between gap-6">
         <a href="/" class="flex items-center gap-2 shrink-0">
           <img src="/megs-logo.svg" alt="Megs" class="h-8 w-auto" />
         </a>
         <nav class="hidden md:flex items-center gap-7 text-sm font-semibold">
-          <a href="#how" class="hover:opacity-70 transition-opacity">How it works</a>
-          <a href="#plays" class="hover:opacity-70 transition-opacity">How your club plays</a>
+          {navLinks.map(l => (
+            <a href={l.href} class="hover:opacity-70 transition-opacity">{l.label}</a>
+          ))}
           <a href="https://app.megs.club" class="hover:opacity-70 transition-opacity opacity-70">Log in</a>
         </nav>
         <a href="https://app.megs.club/create"
@@ -61,103 +97,277 @@ const plays = [
         </a>
       </header>
 
-      <section class="px-6 pt-10 pb-16 max-w-6xl mx-auto grid lg:grid-cols-[1.15fr_1fr] gap-12 items-center">
-        <div>
-          <div class="inline-flex items-center gap-2 rounded-full bg-brand-black text-brand-cream font-scoreboard text-[11px] font-bold tracking-widest uppercase px-4 py-2 mb-8">
-            <span class="w-1.5 h-1.5 rounded-full bg-brand-orange"></span>
-            Built for walking football
+      <!-- Hero -->
+      <section>
+        <div class="px-6 pt-10 pb-10 max-w-6xl mx-auto grid lg:grid-cols-[1.15fr_1fr] gap-12 items-center">
+          <div>
+            <div class="inline-flex items-center gap-2 rounded-full bg-brand-black text-brand-cream font-scoreboard text-[11px] font-bold tracking-widest uppercase px-4 py-2 mb-8">
+              <span class="w-1.5 h-1.5 rounded-full bg-brand-orange"></span>
+              Built for walking football
+            </div>
+
+            <h1 class="font-display text-5xl md:text-7xl lg:text-[5rem] leading-[0.95] mb-6">
+              Fair teams.<br />Sorted subs.<br /><span class="text-brand-orange">One app</span> for your club.
+            </h1>
+
+            <p class="font-body text-lg md:text-xl max-w-xl mb-8 opacity-90">
+              The app built for walking football clubs. Megs balances the teams by ability <em>and</em> age, sorts the subs, and keeps your sessions and league fixtures in one place - so you can get on with the football.
+            </p>
+
+            <div class="flex flex-wrap gap-3">
+              <a href="https://app.megs.club/create"
+                 class="inline-flex items-center justify-center rounded-xl bg-brand-black text-brand-cream font-semibold px-6 py-3.5 text-base shadow-brand-cream hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
+                Get your club on MEGS →
+              </a>
+              <a href="#how-it-works"
+                 class="inline-flex items-center justify-center rounded-xl bg-brand-green border-2 border-brand-black text-brand-black font-semibold px-6 py-3.5 text-base hover:bg-brand-black hover:text-brand-cream transition-colors">
+                See how it works
+              </a>
+            </div>
           </div>
 
-          <h1 class="font-display text-4xl md:text-6xl lg:text-[4.75rem] leading-[0.98] mb-6">
-            Fair teams.<br />Sorted subs.<br /><span class="text-brand-orange">One app</span> for your club.
-          </h1>
+          <!-- Hero fixture card (code-built) - a session with age-balanced teams -->
+          <div class="relative mx-auto w-full max-w-[300px] md:max-w-sm">
+            <div class="absolute -top-5 -left-6 z-10 rotate-3 inline-flex items-center gap-1.5 rounded-full bg-brand-black text-brand-cream font-scoreboard text-xs font-bold tracking-widest uppercase px-3.5 py-2 shadow-brand-sm">
+              <span class="text-sm leading-none">⚖️</span>
+              Balanced by age
+            </div>
+            <div class="absolute -bottom-2 -right-3 z-10 -rotate-3 inline-flex items-center gap-1.5 rounded-full bg-brand-orange text-brand-cream font-scoreboard text-xs font-bold tracking-widest uppercase px-3.5 py-2 shadow-brand-sm">
+              <span class="text-sm leading-none">✔</span>
+              12 in · all paid
+            </div>
 
-          <p class="font-body text-lg md:text-xl max-w-xl mb-8 opacity-90">
-            The app built for walking football clubs. Megs balances the teams by ability <em>and</em> age, sorts the subs, and keeps your sessions and league fixtures in one place - so you can get on with the football.
-          </p>
-
-          <div class="flex flex-wrap gap-3">
-            <a href="https://app.megs.club/create"
-               class="inline-flex items-center justify-center rounded-xl bg-brand-black text-brand-cream font-semibold px-6 py-3.5 text-base shadow-brand-cream hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
-              Get your club on Megs →
-            </a>
-            <a href="#how"
-               class="inline-flex items-center justify-center rounded-xl bg-brand-green border-2 border-brand-black text-brand-black font-semibold px-6 py-3.5 text-base hover:bg-brand-black hover:text-brand-cream transition-colors">
-              See how it works
-            </a>
+            <div class="card-brand p-5 -rotate-2">
+              <div class="flex items-center justify-between font-scoreboard text-[10px] font-bold uppercase tracking-widest text-brand-black/55 mb-3">
+                <span>Thursday · 10:00</span>
+                <span>Session #38</span>
+              </div>
+              <h3 class="font-display text-[2rem] leading-[0.95] mb-4">
+                Walking footy.<br />Teams sorted.
+              </h3>
+              <div class="border-t border-dashed border-brand-black/15 mb-4"></div>
+              <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="rounded-xl border-2 border-brand-black/15 bg-brand-green/25 p-3">
+                  <p class="font-scoreboard text-[9px] font-bold uppercase tracking-widest text-brand-black/55 mb-2">Team A</p>
+                  <ul class="space-y-1.5 text-sm font-semibold">
+                    <li class="flex justify-between"><span>Pat</span><span class="text-brand-black/45 tabular-nums text-xs">72</span></li>
+                    <li class="flex justify-between"><span>Sandra</span><span class="text-brand-black/45 tabular-nums text-xs">61</span></li>
+                    <li class="flex justify-between"><span>Ron</span><span class="text-brand-black/45 tabular-nums text-xs">83</span></li>
+                  </ul>
+                </div>
+                <div class="rounded-xl border-2 border-brand-black/15 bg-brand-orange/10 p-3">
+                  <p class="font-scoreboard text-[9px] font-bold uppercase tracking-widest text-brand-black/55 mb-2">Team B</p>
+                  <ul class="space-y-1.5 text-sm font-semibold">
+                    <li class="flex justify-between"><span>Dave</span><span class="text-brand-black/45 tabular-nums text-xs">68</span></li>
+                    <li class="flex justify-between"><span>Marie</span><span class="text-brand-black/45 tabular-nums text-xs">65</span></li>
+                    <li class="flex justify-between"><span>Jim</span><span class="text-brand-black/45 tabular-nums text-xs">79</span></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="flex items-center justify-between text-sm font-body">
+                <span class="text-brand-black/65">£4 each · +£1 charity</span>
+                <span class="text-brand-deep font-bold">All settled</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Hero card: the age+ability balance, as a fixture snapshot -->
-        <div class="card-brand p-6">
-          <p class="font-scoreboard text-[11px] font-bold tracking-widest uppercase text-brand-deep mb-4">Teams · balanced for you</p>
-          <div class="grid grid-cols-2 gap-3">
-            <div class="rounded-lg bg-brand-green/15 border border-brand-black/10 p-3">
-              <p class="font-scoreboard text-[10px] uppercase tracking-wider text-brand-black/60 mb-2">Team A</p>
-              <ul class="space-y-1.5 text-sm font-semibold">
-                <li class="flex justify-between"><span>Pat</span><span class="text-brand-black/50 tabular-nums">72</span></li>
-                <li class="flex justify-between"><span>Sandra</span><span class="text-brand-black/50 tabular-nums">61</span></li>
-                <li class="flex justify-between"><span>Ron</span><span class="text-brand-black/50 tabular-nums">83</span></li>
-              </ul>
-            </div>
-            <div class="rounded-lg bg-brand-orange/10 border border-brand-black/10 p-3">
-              <p class="font-scoreboard text-[10px] uppercase tracking-wider text-brand-black/60 mb-2">Team B</p>
-              <ul class="space-y-1.5 text-sm font-semibold">
-                <li class="flex justify-between"><span>Dave</span><span class="text-brand-black/50 tabular-nums">68</span></li>
-                <li class="flex justify-between"><span>Marie</span><span class="text-brand-black/50 tabular-nums">65</span></li>
-                <li class="flex justify-between"><span>Jim</span><span class="text-brand-black/50 tabular-nums">79</span></li>
-              </ul>
-            </div>
-          </div>
-          <p class="text-[13px] text-brand-black/70 mt-4 leading-snug">
-            Ability and age spread evenly across both sides - so an over-80 isn’t left chasing a 40-year-old.
+        <div class="px-6 pb-16 max-w-6xl mx-auto flex justify-center">
+          <p class="font-scoreboard text-sm font-extrabold uppercase tracking-widest text-brand-cream flex items-center gap-2">
+            <span class="text-brand-orange text-lg leading-none">✔</span>
+            Free for clubs. Forever.
           </p>
         </div>
       </section>
     </div>
 
-    <!-- ============ THE PROBLEM ============ -->
-    <section class="bg-brand-cream text-brand-black px-6 py-16 md:py-20">
-      <div class="max-w-4xl mx-auto">
-        <h2 class="font-display text-3xl md:text-4xl mb-8 leading-tight">Sound familiar?</h2>
-        <ul class="grid sm:grid-cols-2 gap-4">
-          {problems.map((p) => (
-            <li class="flex gap-3 items-start">
-              <span class="mt-1 text-brand-orange font-black shrink-0">—</span>
-              <span class="font-body text-lg">{p}</span>
-            </li>
-          ))}
+    <!-- ============== THE REALITY ============== -->
+    <section class="bg-brand-black text-brand-cream">
+      <div class="px-6 py-24 max-w-5xl mx-auto">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest text-brand-orange mb-6">Every week</p>
+        <h2 class="font-body font-extrabold text-4xl md:text-6xl leading-tight tracking-tight mb-12 max-w-3xl">
+          It’s the same jobs, every session.
+        </h2>
+
+        <div class="space-y-2 max-w-md mb-12">
+          <div class="bg-brand-cream/10 backdrop-blur-sm rounded-2xl rounded-bl-sm px-5 pt-3 pb-2 font-body">
+            <p class="text-base">"Who’s in for Thursday?"</p>
+            <div class="flex items-center justify-end gap-1.5 mt-1">
+              <span class="text-[10px] leading-none text-brand-cream/50">09:12</span>
+              <span class="text-[11px] leading-none text-[#53bdeb] tracking-[-0.4em] pr-1">✓✓</span>
+            </div>
+          </div>
+          <div class="bg-brand-cream/10 backdrop-blur-sm rounded-2xl rounded-bl-sm px-5 pt-3 pb-2 font-body ml-6">
+            <p class="text-base">"Can someone sort the teams?"</p>
+            <div class="flex items-center justify-end gap-1.5 mt-1">
+              <span class="text-[10px] leading-none text-brand-cream/50">09:41</span>
+              <span class="text-[11px] leading-none text-[#53bdeb] tracking-[-0.4em] pr-1">✓✓</span>
+            </div>
+          </div>
+          <div class="bg-brand-cream/10 backdrop-blur-sm rounded-2xl rounded-bl-sm px-5 pt-3 pb-2 font-body ml-12">
+            <p class="text-base">"Has everyone paid their subs?"</p>
+            <div class="flex items-center justify-end gap-1.5 mt-1">
+              <span class="text-[10px] leading-none text-brand-cream/50">10:02</span>
+              <span class="text-[11px] leading-none text-[#53bdeb] tracking-[-0.4em] pr-1">✓✓</span>
+            </div>
+          </div>
+          <div class="bg-brand-cream/10 backdrop-blur-sm rounded-2xl rounded-bl-sm px-5 pt-3 pb-2 font-body ml-20">
+            <p class="text-base">"Anyone got change for a fiver?"</p>
+            <div class="flex items-center justify-end gap-1.5 mt-1">
+              <span class="text-[10px] leading-none text-brand-cream/50">10:04</span>
+              <span class="text-[11px] leading-none text-[#53bdeb] tracking-[-0.4em] pr-1">✓✓</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="font-body text-lg md:text-xl mb-6 max-w-2xl">
+          And you’re still the one:
+        </p>
+        <ul class="font-body text-lg md:text-xl space-y-2 mb-12 max-w-2xl">
+          <li class="flex gap-3"><span class="text-brand-orange shrink-0">×</span> splitting the teams by hand at the side of the pitch</li>
+          <li class="flex gap-3"><span class="text-brand-orange shrink-0">×</span> trying to keep the ages and abilities even</li>
+          <li class="flex gap-3"><span class="text-brand-orange shrink-0">×</span> collecting subs in cash and coins</li>
+          <li class="flex gap-3"><span class="text-brand-orange shrink-0">×</span> remembering who’s still owed from a fortnight ago</li>
         </ul>
-        <p class="font-body text-lg mt-8 opacity-80">
-          Megs does the admin so the organiser can stop being the referee off the pitch too.
+
+        <p class="font-body font-extrabold text-3xl md:text-5xl leading-tight tracking-tight">
+          It’s a lot of admin<br />before a ball’s kicked.
         </p>
       </div>
     </section>
 
-    <!-- ============ HOW IT WORKS / FEATURES ============ -->
-    <section id="how" class="bg-pitch text-brand-black px-6 py-16 md:py-20">
-      <div class="max-w-6xl mx-auto">
-        <h2 class="font-display text-3xl md:text-4xl mb-3 leading-tight">What Megs does for your club</h2>
-        <p class="font-body text-lg opacity-85 max-w-2xl mb-10">Everything a walking football organiser does by hand - handled in a couple of taps.</p>
-        <div class="grid md:grid-cols-2 gap-5">
-          {features.map((f) => (
-            <div class="card-brand p-6">
-              <p class="font-scoreboard text-[10px] font-bold tracking-widest uppercase text-brand-deep mb-3">{f.tag}</p>
-              <h3 class="font-display text-2xl mb-2">{f.title}</h3>
-              <p class="font-body text-brand-black/80 leading-relaxed">{f.body}</p>
+    <!-- ============== THE FIX ============== -->
+    <section class="bg-pitch">
+      <div class="px-6 py-24 max-w-5xl mx-auto text-center">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest opacity-80 mb-6">The fix</p>
+        <h2 class="font-display text-5xl md:text-7xl leading-[0.95] mb-10">
+          Megs runs your<br />club for you.
+        </h2>
+        <div class="font-body font-extrabold text-3xl md:text-4xl space-y-1 mb-10 opacity-90 tracking-tight">
+          <p>No hand-sorting teams.</p>
+          <p>No chasing subs.</p>
+          <p>No awkward mismatches.</p>
+        </div>
+        <p class="font-display text-4xl md:text-5xl text-brand-orange">
+          Just turn up and play.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============== PRICING STRIP ============== -->
+    <section class="bg-brand-black text-brand-cream">
+      <div class="px-6 py-16 max-w-4xl mx-auto text-center">
+        <div class="inline-flex items-center gap-2 rounded-full bg-brand-green text-brand-black font-scoreboard text-[11px] font-bold tracking-widest uppercase px-4 py-2 mb-6">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-orange"></span>
+          Pricing
+        </div>
+        <h2 class="font-body font-extrabold text-3xl md:text-5xl tracking-tight mb-5">
+          Free for clubs. Forever.
+        </h2>
+        <p class="font-body text-lg md:text-xl max-w-2xl mx-auto opacity-85">
+          No subscription. No trial. Players only pay a small per-match fee when you choose to collect subs through Megs.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============== HOW IT WORKS ============== -->
+    <section id="how-it-works" class="bg-brand-cream text-brand-black">
+      <div class="px-6 py-24 max-w-6xl mx-auto">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest opacity-70 mb-6">How it works</p>
+        <h2 class="font-body font-extrabold text-4xl md:text-6xl leading-tight tracking-tight mb-16 max-w-3xl">
+          From group chat to kick-off in four steps.
+        </h2>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {steps.map((s, i) => (
+            <div class="flex flex-col-reverse md:flex-col gap-4">
+              {i < 3 && s.imageSrc && (
+                <div class="card-brand p-2 overflow-hidden max-w-[280px] mx-auto md:max-w-none w-full">
+                  <img src={s.imageSrc} alt={`${s.title} - Megs app screenshot`} class="w-full h-auto block rounded-lg" />
+                </div>
+              )}
+              {i === 3 && (
+                <div class="aspect-[9/19.5] card-brand bg-brand-green text-brand-black p-6 relative overflow-hidden flex items-center justify-center text-center max-w-[280px] mx-auto md:max-w-none w-full">
+                  <div class="absolute top-4 left-3 z-20 rotate-3 inline-flex items-center gap-1.5 rounded-full bg-brand-black text-brand-cream font-scoreboard text-[11px] font-bold tracking-widest uppercase px-3 py-1.5 shadow-brand-sm">
+                    <span class="text-sm leading-none">⚽</span>
+                    Kick-off
+                  </div>
+                  <p class="font-display text-4xl leading-[0.95] relative z-10">Turn up<br />and play.</p>
+                  <div class="absolute bottom-4 right-2 z-20 -rotate-3 inline-flex items-center gap-1.5 rounded-full bg-brand-orange text-brand-cream font-scoreboard text-[11px] font-bold tracking-widest uppercase px-3 py-1.5 shadow-brand-sm">
+                    <span class="text-sm leading-none">✔</span>
+                    All paid
+                  </div>
+                </div>
+              )}
+              <div>
+                <p class="font-scoreboard text-sm text-brand-orange mb-1">{s.n}</p>
+                <h3 class="font-body font-extrabold text-2xl tracking-tight mb-2">{s.title}</h3>
+                <p class="font-body text-sm leading-relaxed text-brand-black/75">{s.body}</p>
+              </div>
             </div>
           ))}
         </div>
       </div>
     </section>
 
-    <!-- ============ HOW YOUR CLUB PLAYS ============ -->
-    <section id="plays" class="bg-brand-deep text-brand-cream px-6 py-16 md:py-20">
-      <div class="max-w-5xl mx-auto">
-        <h2 class="font-display text-3xl md:text-4xl mb-3 leading-tight text-brand-cream">However your club plays</h2>
-        <p class="font-body text-lg opacity-85 max-w-2xl mb-10">Community, competitive, or a bit of both - Megs fits around your week, not the other way round.</p>
+    <!-- ============== HOW BALANCING WORKS ============== -->
+    <section id="balancing" class="bg-brand-cream text-brand-black">
+      <div class="px-6 py-24 max-w-6xl mx-auto">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest text-brand-orange mb-6">Fair teams</p>
+        <h2 class="font-body font-extrabold text-4xl md:text-6xl leading-tight tracking-tight mb-16 max-w-3xl">
+          Even games, whatever the age gap.
+        </h2>
+
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <div class="font-body text-lg leading-relaxed text-brand-black/85 space-y-5">
+            <p>Walking football brings all ages and abilities together - which is exactly what makes it special, and exactly what makes fair teams tricky. An over-80 shouldn’t be left chasing a 40-year-old.</p>
+            <p>So Megs balances the sides by <strong>ability and age</strong>, spreading pace and experience evenly across both teams. You set each player’s level once; the balance gets sharper every session. And it’s a starting point, not a straitjacket - tweak it before kick-off if you want.</p>
+            <p class="font-extrabold text-brand-black">No sorting sides by hand. No one team running away with it. Just even games where everyone gets a proper run-out.</p>
+          </div>
+
+          <div class="card-brand mx-auto w-full max-w-sm p-3">
+            <img src="/feature-balancing.webp"
+                 alt="Megs balanced teams: two evenly-matched sides, balanced across ability"
+                 class="w-full h-auto block rounded-lg" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== WHAT MEGS HANDLES ============== -->
+    <section id="features" class="bg-pitch">
+      <div class="px-6 py-24 max-w-6xl mx-auto">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest opacity-80 mb-6">What Megs handles</p>
+        <h2 class="font-body font-extrabold text-4xl md:text-6xl leading-tight tracking-tight mb-16 max-w-3xl">
+          Everything running a session involves. None of the admin.
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          {features.map(f => (
+            <div class="card-brand p-6 flex flex-col gap-5">
+              <div class="aspect-[1/1] rounded-xl overflow-hidden bg-brand-cream">
+                <img src={f.imageSrc} alt={`${f.title} - Megs app screenshot`} class="w-full h-full object-cover object-top" />
+              </div>
+              <div>
+                <h3 class="font-body font-extrabold text-3xl tracking-tight mb-2">{f.title}</h3>
+                <p class="font-body text-base leading-relaxed text-brand-black/80">{f.body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== HOW YOUR CLUB PLAYS ============== -->
+    <section id="plays" class="bg-brand-deep text-brand-cream">
+      <div class="px-6 py-24 max-w-5xl mx-auto">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest text-brand-green mb-6">However your club plays</p>
+        <h2 class="font-body font-extrabold text-4xl md:text-6xl leading-tight tracking-tight mb-4 text-brand-cream max-w-3xl">
+          Community, competitive, or both.
+        </h2>
+        <p class="font-body text-lg opacity-85 max-w-2xl mb-12">Megs fits around your week, not the other way round.</p>
         <div class="grid md:grid-cols-3 gap-5">
-          {plays.map((p) => (
+          {plays.map(p => (
             <div class="rounded-2xl border-2 border-brand-cream/25 p-6">
               <h3 class="font-display text-xl mb-2 text-brand-green">{p.h}</h3>
               <p class="font-body text-brand-cream/85 leading-relaxed text-[15px]">{p.b}</p>
@@ -170,31 +380,136 @@ const plays = [
       </div>
     </section>
 
-    <!-- ============ CTA ============ -->
-    <section class="bg-pitch-glow text-brand-black px-6 py-20">
-      <div class="max-w-3xl mx-auto text-center">
-        <h2 class="font-display text-4xl md:text-5xl mb-5 leading-[0.98]">Get your club on Megs.</h2>
-        <p class="font-body text-lg md:text-xl opacity-90 mb-8 max-w-xl mx-auto">
-          Free to set up, free for your players to join. Have your first fair-teams session sorted in minutes.
+    <!-- ============== WHY ============== -->
+    <section id="why" class="bg-brand-cream text-brand-black">
+      <div class="px-6 py-24 max-w-5xl mx-auto">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest opacity-70 mb-6">Why clubs use Megs</p>
+        <h2 class="font-body font-extrabold text-4xl md:text-6xl leading-tight tracking-tight mb-8 max-w-3xl">
+          Because running the session is the hard part.
+        </h2>
+        <p class="font-body font-extrabold text-3xl md:text-4xl text-brand-orange mb-12 tracking-tight">
+          Megs takes it off your hands.
+        </p>
+
+        <ul class="font-body text-lg md:text-2xl space-y-3 max-w-2xl">
+          <li class="flex gap-4 items-baseline"><span class="font-scoreboard text-brand-orange text-xl shrink-0">✓</span> No more chasing who’s coming</li>
+          <li class="flex gap-4 items-baseline"><span class="font-scoreboard text-brand-orange text-xl shrink-0">✓</span> No more sorting teams pitch-side</li>
+          <li class="flex gap-4 items-baseline"><span class="font-scoreboard text-brand-orange text-xl shrink-0">✓</span> No more mismatched sides</li>
+          <li class="flex gap-4 items-baseline"><span class="font-scoreboard text-brand-orange text-xl shrink-0">✓</span> No more "has everyone paid?"</li>
+        </ul>
+
+        <p class="font-display text-3xl md:text-5xl mt-12">Just better sessions.</p>
+      </div>
+    </section>
+
+    <!-- ============== SOCIAL PROOF (honest - no invented WF testimonials) ============== -->
+    <section class="bg-pitch">
+      <div class="px-6 py-20 max-w-5xl mx-auto text-center">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest opacity-80 mb-6">Built for the grassroots game</p>
+        <p class="font-body font-extrabold text-3xl md:text-5xl leading-tight tracking-tight max-w-3xl mx-auto">
+          Made for clubs who’d rather spend their time playing than running the admin.
+        </p>
+        <p class="font-body text-lg md:text-xl max-w-2xl mx-auto opacity-85 mt-6">
+          Megs already runs weekly games up and down the country - now tuned for walking football clubs and how they actually play.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============== FOUNDER PANEL ============== -->
+    <section id="founder" class="bg-pitch">
+      <div class="px-6 py-24 max-w-5xl mx-auto">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest opacity-80 mb-8">From the founder</p>
+        <div class="grid md:grid-cols-[auto_1fr] gap-8 md:gap-10 items-center">
+          <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-brand-cream border-2 border-brand-black shadow-brand overflow-hidden mx-auto md:mx-0 shrink-0">
+            <Image src={eddiePhoto} alt="Eddie, founder of Megs" width={320} height={320} class="w-full h-full object-cover" />
+          </div>
+          <div>
+            <p class="font-body text-xl md:text-2xl leading-relaxed mb-6 max-w-2xl">
+              Hi, I’m Eddie. I built Megs because I couldn’t take another "who’s in?" message in the group chat. The jobs are the same whatever the game - chasing replies, sorting teams, collecting subs. Walking football clubs do all of that too, just with a wider spread of ages and abilities to keep fair. So Megs does the admin, balances the sides properly, and lets you get on with the football.
+            </p>
+            <p class="font-scoreboard text-xs font-bold uppercase tracking-widest opacity-60">
+              Eddie · Founder · Manchester
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== FAQ ============== -->
+    <section id="faq" class="bg-brand-cream text-brand-black">
+      <div class="px-6 py-24 max-w-4xl mx-auto">
+        <p class="font-scoreboard font-extrabold text-sm uppercase tracking-widest text-brand-orange mb-6">FAQ</p>
+        <h2 class="font-body font-extrabold text-4xl md:text-6xl leading-tight tracking-tight mb-12 max-w-3xl">
+          Questions, answered.
+        </h2>
+        <div class="space-y-3">
+          {faqs.map(item => (
+            <details class="group border-2 border-brand-black/15 rounded-2xl bg-brand-cream overflow-hidden">
+              <summary class="flex items-center justify-between gap-4 cursor-pointer p-5 font-body font-bold text-lg list-none [&::-webkit-details-marker]:hidden hover:bg-brand-black/[0.03] transition-colors">
+                <span>{item.q}</span>
+                <span class="text-brand-orange text-3xl leading-none shrink-0 transition-transform duration-200 group-open:rotate-45">+</span>
+              </summary>
+              <div class="px-5 pb-5 -mt-1 font-body text-base leading-relaxed text-brand-black/80">
+                {item.a}
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+      <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqs.map(item => ({
+          "@type": "Question",
+          "name": item.q,
+          "acceptedAnswer": { "@type": "Answer", "text": item.a }
+        }))
+      })} />
+    </section>
+
+    <!-- ============== FINAL CTA ============== -->
+    <section class="bg-brand-orange text-brand-black">
+      <div class="px-6 py-28 max-w-5xl mx-auto text-center">
+        <div class="inline-flex items-center gap-2 rounded-full bg-brand-black text-brand-cream font-scoreboard text-[11px] font-bold tracking-widest uppercase px-4 py-2 mb-8">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-green"></span>
+          Free forever for clubs
+        </div>
+        <h2 class="font-display text-5xl md:text-7xl lg:text-8xl leading-[0.95] mb-6">
+          Your club.<br />Properly run.
+        </h2>
+        <p class="font-body text-lg md:text-xl mb-10 max-w-xl mx-auto opacity-85">
+          Set up in minutes. Free for your players to join. Have your first fair-teams session sorted this week.
         </p>
         <div class="flex flex-wrap gap-3 justify-center">
           <a href="https://app.megs.club/create"
-             class="inline-flex items-center justify-center rounded-xl bg-brand-black text-brand-cream font-semibold px-7 py-4 text-base shadow-brand-cream hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
-            Get started - it’s free →
+             class="inline-flex items-center justify-center rounded-xl bg-brand-black text-brand-cream font-semibold px-8 py-4 text-lg shadow-brand-cream hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
+            Get your club on MEGS →
           </a>
           <a href="https://wa.me/message/Y25KBMDFGQ6JK1"
-             class="inline-flex items-center justify-center rounded-xl bg-brand-green border-2 border-brand-black text-brand-black font-semibold px-7 py-4 text-base hover:bg-brand-black hover:text-brand-cream transition-colors">
+             class="inline-flex items-center justify-center rounded-xl bg-brand-orange border-2 border-brand-black text-brand-black font-semibold px-8 py-4 text-lg hover:bg-brand-black hover:text-brand-cream transition-colors">
             Chat to us first
           </a>
         </div>
       </div>
     </section>
 
-    <footer class="bg-brand-black text-brand-cream px-6 py-10">
-      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
-        <img src="/megs-logo.svg" alt="Megs" class="h-7 w-auto opacity-90" />
-        <p class="opacity-60">The app for your weekly game. Walking football, casual or league.</p>
-        <a href="/" class="opacity-80 hover:opacity-100 font-semibold">megs.club →</a>
+    <!-- ============== FOOTER ============== -->
+    <footer class="bg-brand-black text-brand-cream">
+      <div class="px-6 py-12 max-w-6xl mx-auto">
+        <div class="flex flex-wrap items-center justify-between gap-6 mb-8">
+          <a href="/" class="flex items-center gap-3">
+            <img src="/megs-logo-white.svg" alt="Megs" class="h-8 w-auto" />
+          </a>
+          <p class="font-display text-xl">Your weekly game, sorted.</p>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-4 text-sm font-body opacity-70 border-t border-brand-cream/15 pt-6">
+          <span>© {new Date().getFullYear()} Megs</span>
+          <div class="flex gap-6">
+            <a href="/" class="hover:opacity-100">Home</a>
+            <a href="https://app.megs.club" class="hover:opacity-100">Open app</a>
+            <a href="/privacy" class="hover:opacity-100">Privacy</a>
+          </div>
+        </div>
       </div>
     </footer>
   </main>
