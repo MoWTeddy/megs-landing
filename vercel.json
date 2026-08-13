@@ -1,6 +1,28 @@
 {
   "redirects": [
     {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "walkingfootball.app"
+        }
+      ],
+      "destination": "https://megs.club/walking-football",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.walkingfootball.app"
+        }
+      ],
+      "destination": "https://megs.club/walking-football",
+      "permanent": true
+    },
+    {
       "source": "/:path*",
       "has": [
         {
