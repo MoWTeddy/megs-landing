@@ -578,3 +578,26 @@ const faqSchema = {
   // If they generated teams and came back post-game, greet them with "who won?"
   renderAll();
 </script>
+
+<!-- Tool-usage measurement. Deliberately separate from the balancer's own
+     script so instrumentation can never break the tool itself, and attached
+     with capture:true so it records the intent even if the handler below
+     throws. megsTrack is a no-op when analytics is not configured. -->
+<script is:inline>
+  (function () {
+    function on(id, name, extra) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('click', function () {
+        try {
+          var n = document.querySelectorAll('#playerList li').length;
+          window.megsTrack && window.megsTrack(name, Object.assign({ player_count: n }, extra || {}));
+        } catch (e) { /* never break the tool */ }
+      }, true);
+    }
+    // Intent: pasted a squad and asked us to read it.
+    on('parseBtn', 'tool_squad_parsed');
+    // Value delivered: teams actually generated. This is "the tool was used".
+    on('makeTeams', 'tool_used', { tool: 'team_balancer' });
+  })();
+</script>

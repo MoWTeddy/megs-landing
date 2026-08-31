@@ -1,0 +1,92 @@
+---
+// Marketing-site analytics.
+//
+// megs.club is the actual SEO/acquisition property - the programmatic league
+// pages and the free team balancer both live here - and it was entirely
+// uninstrumented. PostHog was named in the privacy policy as a processor but
+// never loaded, so every visit, tool use and click through to the app was
+// invisible.
+//
+// Same PostHog project as the app, so a visitor who lands here and then signs
+// up is one person rather than two anonymous halves.
+//
+// Privacy posture mirrors the app, with one deliberate difference:
+// capture_pageview is ON here. The app disables it because its URLs carry
+// capability tokens (/claim/{token}); these pages are public marketing content
+// with nothing sensitive in the path, and "which page did they land on" is the
+// whole question this site has to answer.
+const posthogKey = import.meta.env.PUBLIC_POSTHOG_KEY;
+const posthogHost = import.meta.env.PUBLIC_POSTHOG_HOST || 'https://eu.i.posthog.com';
+---
+
+{posthogKey && (
+  <script is:inline define:vars={{ posthogKey, posthogHost }}>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+
+    posthog.init(posthogKey, {
+      api_host: posthogHost,
+      autocapture: false,          // never scrape DOM text
+      capture_pageview: true,      // public marketing pages - this is the point
+      capture_pageleave: false,
+      disable_session_recording: true,
+      persistence: 'localStorage+cookie',
+    });
+
+    // ---- Which surface is this? Used for events and for the hand-off tag. ----
+    var path = window.location.pathname;
+    var surface =
+      path === '/' ? 'home'
+      : path.indexOf('/team-balancer') === 0 ? 'team_balancer'
+      : path.indexOf('/walking-football') === 0 ? 'walking_football'
+      : /^\/leagues\/[^/]+\/[^/]+\/[^/]+\/[^/]+/.test(path) ? 'team_page'
+      : path.indexOf('/leagues') === 0 ? 'league_index'
+      : 'other';
+
+    posthog.register({ marketing_surface: surface });
+    posthog.capture('marketing_page_viewed', { surface: surface, path: path });
+
+    // ---- Carry attribution across the domain boundary ----
+    // megs.club and app.megs.club are separate origins, so nothing is shared
+    // automatically. Without this, every visitor who lands on a league page and
+    // then clicks through to sign up arrives at the app looking like direct
+    // traffic, and the acquisition channel is lost at the last step.
+    //
+    // Any utm_* already on this page is forwarded verbatim; otherwise the page
+    // itself becomes the attributed surface via the short `s` tag that
+    // captureFirstTouch() reads in the app.
+    function decorate() {
+      var here = new URLSearchParams(window.location.search);
+      var links = document.querySelectorAll('a[href*="app.megs.club"]');
+      for (var i = 0; i < links.length; i++) {
+        var a = links[i];
+        try {
+          var u = new URL(a.getAttribute('href'), window.location.origin);
+          ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','fbclid'].forEach(function (k) {
+            var v = here.get(k);
+            if (v && !u.searchParams.has(k)) u.searchParams.set(k, v.slice(0, 64));
+          });
+          if (!u.searchParams.has('s')) u.searchParams.set('s', surface);
+          a.setAttribute('href', u.toString());
+        } catch (e) { /* leave the link untouched rather than break it */ }
+      }
+    }
+    decorate();
+
+    // ---- Click-through to the app ----
+    document.addEventListener('click', function (ev) {
+      var a = ev.target && ev.target.closest ? ev.target.closest('a') : null;
+      if (!a) return;
+      var href = a.getAttribute('href') || '';
+      if (href.indexOf('app.megs.club') === -1) return;
+      // Path only - never the query string, which now carries campaign values.
+      var dest = '/';
+      try { dest = new URL(href, window.location.origin).pathname; } catch (e) { /* default */ }
+      posthog.capture('cta_clicked', { surface: surface, destination: dest });
+    }, true);
+
+    // Expose a tiny helper so pages can record their own meaningful actions.
+    window.megsTrack = function (name, props) {
+      try { posthog.capture(name, Object.assign({ surface: surface }, props || {})); } catch (e) {}
+    };
+  </script>
+)}
